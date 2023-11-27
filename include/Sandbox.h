@@ -8,6 +8,10 @@ class Sandbox {
 public:
 	// particle information
 	ParticleArray particles;
+
+	// allocates each info array
+	Sandbox(uint32_t max_particles);
+	~Sandbox();
 	
 };
 
