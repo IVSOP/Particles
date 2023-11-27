@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build_debug",
+            "type": "shell",
+            "command": "./debug.sh",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+		// {
+        //     "label": "build",
+        //     "type": "shell",
+        //     "command": "./build.sh",
+        //     "group": {
+        //         "kind": "build",
+        //         "isDefault": true
+        //     }
+        // }
+    ]
+}

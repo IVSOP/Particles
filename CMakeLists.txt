@@ -11,6 +11,9 @@ SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
 add_executable(${PROJECT_NAME} 
 	src/main.cpp
 	src/GLErrors.cpp
+	src/Renderer.cpp
+	src/Sandbox.cpp
+	src/Grid.cpp
 
 	external/imgui/src/imgui.cpp
 	external/imgui/src/imgui_draw.cpp
