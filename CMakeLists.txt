@@ -15,6 +15,7 @@ add_executable(${PROJECT_NAME}
 	src/Sandbox.cpp
 	src/Grid.cpp
 	src/Simulator.cpp
+	src/common.cpp
 
 	external/imgui/src/imgui.cpp
 	external/imgui/src/imgui_draw.cpp

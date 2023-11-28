@@ -4,9 +4,6 @@
 #include "common.h"
 #include <memory>
 
-// use this so I can change to double if I feel like it
-typedef float pFloat;
-
 struct ParticleColor {
 	GLfloat R;
 	GLfloat G;
@@ -22,19 +19,19 @@ struct ParticleColor {
 struct ParticleArray {
 	ParticleArray() = delete; // for safety
 	ParticleArray(uint32_t len)
-		: current_x(std::make_unique<pFloat[]>(len)), current_y(std::make_unique<pFloat[]>(len)), old_x(std::make_unique<pFloat[]>(len)),
-		  old_y(std::make_unique<pFloat[]>(len)), accel_x(std::make_unique<pFloat[]>(len)), accel_y(std::make_unique<pFloat[]>(len)), color(std::make_unique<ParticleColor[]>(len)), len(len)
+		: current_x(std::make_unique<GLfloat[]>(len)), current_y(std::make_unique<GLfloat[]>(len)), old_x(std::make_unique<GLfloat[]>(len)),
+		  old_y(std::make_unique<GLfloat[]>(len)), accel_x(std::make_unique<GLfloat[]>(len)), accel_y(std::make_unique<GLfloat[]>(len)), color(std::make_unique<ParticleColor[]>(len)), len(len)
 		{}
 	~ParticleArray() = default;
 
 	// add restrict to all pointers?
-	std::unique_ptr<pFloat[]> current_x;
-	std::unique_ptr<pFloat[]> current_y;
-	std::unique_ptr<pFloat[]> old_x;
-	std::unique_ptr<pFloat[]> old_y;
+	std::unique_ptr<GLfloat[]> current_x;
+	std::unique_ptr<GLfloat[]> current_y;
+	std::unique_ptr<GLfloat[]> old_x;
+	std::unique_ptr<GLfloat[]> old_y;
 	// size_t *radius;
-	std::unique_ptr<pFloat[]> accel_x;
-	std::unique_ptr<pFloat[]> accel_y;
+	std::unique_ptr<GLfloat[]> accel_x;
+	std::unique_ptr<GLfloat[]> accel_y;
 	std::unique_ptr<ParticleColor[]> color; 
 	uint32_t len;
 };
