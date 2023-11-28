@@ -1,15 +1,20 @@
-#include "Sandbox.h"
+#include "Simulator.h"
 #include <stdio.h>
 
 int main () {
-	Sandbox sandbox(1000);
-	int i;
-	// test unique_ptr, dont trust it
-	for (i = 0; i < 1000; i++) {
-		sandbox.particles.accel_x[i] = static_cast<float>(i);
-	}
-	for (i = 0; i < 1000; i++) {
-		printf("%d %f\n", i, sandbox.particles.accel_x[i]);
-	}
-	return 1;
+	
 }
+
+
+
+todo:
+sandbox needs to determine grid dimentions from the data provided
+sandbox should also prob save the particle radius to be able to check for collisions
+
+after that, start putting renderer together, as well as the shaders
+need to use image to render, send in only the color, radius and position.
+
+radius: same for all instances   | send these once
+texture: same for all instances  |
+position: one per instance | group these together in an array???
+color: one per instance    |
