@@ -5,6 +5,7 @@ int main () {
 	Renderer renderer(10000, 1000, 1000, 5.0f);
 	renderer.setupWindow();
 	renderer.setupBuffers();
+	renderer.setupShaders();
 	sleep(1000);
 }
 

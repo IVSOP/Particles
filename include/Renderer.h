@@ -14,14 +14,17 @@ public:
 	GLfloat particle_radius;
 	GLFWwindow *window;
 	GLuint VAO; // everything happens in this VAO
-	GLuint ModelBuffer, X_CoordBuffer, Y_CoordBuffer, ColorBuffer, program;
+	GLuint VertexBuffer, IBO, X_CoordBuffer, Y_CoordBuffer, ColorBuffer, program;
 	// ModelBuffer defines how one particle should be rendered, effectively doing the same for all other particles
 
 	/*
 		Particle information for the gpu:
-			passed in once, using uniforms:
+			passed in once, using a single static buffer:
 				particle radius -> 1 GLfloat
-				texture (the circle) -> ...
+				texture coordinates -> 2 GLfloats
+
+			passed in once, using uniform:
+				texture
 		
 			passed every frame, through buffers:
 				buffer for X coordinates -> 1 GLfloat
@@ -34,7 +37,7 @@ public:
 
 	Renderer(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_height, GLfloat particle_radius)
 		: max_particles(max_particles), pixel_width(pixel_width), pixel_height(pixel_height), particle_radius(particle_radius),
-		  VAO(0), X_CoordBuffer(0), Y_CoordBuffer(0), ColorBuffer(0), program(0)
+		  VAO(0), VertexBuffer(0), IBO(0), X_CoordBuffer(0), Y_CoordBuffer(0), ColorBuffer(0), program(0)
 		{ }
 	~Renderer() {
 
@@ -51,6 +54,3 @@ public:
 };
 
 #endif
-
-
-// to draw particles, I can pass in the exact array already probably?

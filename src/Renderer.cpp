@@ -21,7 +21,7 @@ void Renderer::setupWindow() {
 	}
 	glfwMakeContextCurrent(window);
 
-	// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if (glewInit() != GLEW_OK) {
 		std::cout << "GLEW failed\n";
@@ -49,10 +49,10 @@ void Renderer::setupWindow() {
 	// // io.ConfigFlags |= .....
 
 	// // MSAA
-	// glEnable(GL_MULTISAMPLE); 
+	// glEnable(GL_MULTISAMPLE);
 }
 
-void Renderer::setupBuffers() { // falta fazer os layouts ou nem por isso?????
+void Renderer::setupBuffers() {
 	GLuint VAO;
 	GLCall(glGenVertexArrays(1, &VAO));
 	GLCall(glBindVertexArray(VAO));
@@ -60,23 +60,88 @@ void Renderer::setupBuffers() { // falta fazer os layouts ou nem por isso?????
 
 	// stream, dynamic or static??????????
 
+	/*
+		3---2
+		|   |
+		0---1
+	*/
+
+	// for simplicity, scaling based on the radius is done here
+	GLfloat normalized_radius = this->particle_radius / this->pixel_width;
+	// GLfloat vertices[] {
+	// 	// x, y, z, texture_x, texture_y
+	// 	-1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
+	// 	 1.0f, -1.0f, 1.0f, 1.0f, 0.0f,
+	// 	 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+	// 	-1.0f,  1.0f, 1.0f, 0.0f, 1.0f
+	// };
+
+	GLfloat vertices[] {
+		// x, y, z, texture_x, texture_y
+		-normalized_radius, -normalized_radius, 1.0f, 0.0f, 0.0f,
+		 normalized_radius, -normalized_radius, 1.0f, 1.0f, 0.0f,
+		 normalized_radius,  normalized_radius, 1.0f, 1.0f, 1.0f,
+		-normalized_radius,  normalized_radius, 1.0f, 0.0f, 1.0f
+	};
+
+	GLuint indices[] = {
+		0, 1, 2,
+		2, 3, 0
+	};
+
+	// this is the 'model' basically, it defines the standard, already with the scaling applied
+	// particles going to a certain position is just applying some translation and scaling to this standard
+	GLuint VertexBuffer;
+	GLCall(glGenBuffers(1, &X_CoordBuffer));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, X_CoordBuffer));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
+	this->VertexBuffer = VertexBuffer;
+		GLuint vertex_position_layout = 0;
+		GLCall(glEnableVertexAttribArray(vertex_position_layout));
+		GLCall(glVertexAttribPointer(vertex_position_layout, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), 0));
+		GLCall(glVertexAttribDivisor(vertex_position_layout, 0)); // values are per vertex
+		GLuint vertex_texture_layout = 1;
+		GLCall(glEnableVertexAttribArray(vertex_texture_layout));
+															// 2 floats, stride is 5, offset is 3 floats from the beggining
+		GLCall(glVertexAttribPointer(vertex_texture_layout, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (const void *)(3 * sizeof(GLfloat))));
+		GLCall(glVertexAttribDivisor(vertex_texture_layout, 0)); // values are per vertex
+
+	// specify vertex draw order
+	GLuint IBO;
+	GLCall(glGenBuffers(1, &IBO));
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO));
+	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
+	this->IBO = IBO;
+
 	GLuint X_CoordBuffer;
 	GLCall(glGenBuffers(1, &X_CoordBuffer));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, X_CoordBuffer));
 	GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * max_particles, nullptr, GL_STREAM_DRAW));
 	this->X_CoordBuffer = X_CoordBuffer;
+		GLuint x_coord_layout = 2;
+		GLCall(glEnableVertexAttribArray(x_coord_layout));
+		GLCall(glVertexAttribPointer(x_coord_layout, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), 0));
+		GLCall(glVertexAttribDivisor(x_coord_layout, 1)); // values are per instance
 
 	GLuint Y_CoordBuffer;
 	GLCall(glGenBuffers(1, &Y_CoordBuffer));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, Y_CoordBuffer));
 	GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * max_particles, nullptr, GL_STREAM_DRAW));
 	this->Y_CoordBuffer = Y_CoordBuffer;
+		GLuint y_coord_layout = 3;
+		GLCall(glEnableVertexAttribArray(y_coord_layout));
+		GLCall(glVertexAttribPointer(y_coord_layout, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), 0));
+		GLCall(glVertexAttribDivisor(y_coord_layout, 1)); // values are per instance
 
 	GLuint ColorBuffer;
 	GLCall(glGenBuffers(1, &ColorBuffer));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, ColorBuffer));
 	GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(GLfloat) * max_particles, nullptr, GL_STREAM_DRAW));
 	this->ColorBuffer = ColorBuffer;
+		GLuint color_layout = 4;
+		GLCall(glEnableVertexAttribArray(color_layout));
+		GLCall(glVertexAttribPointer(color_layout, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0));
+		GLCall(glVertexAttribDivisor(color_layout, 1)); // values are per instance
 }
 
 void Renderer::setupShaders() {
