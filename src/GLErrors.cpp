@@ -59,7 +59,7 @@ void checkErrorInShader(GLuint shader) {
 		char *message = (char *)alloca((len + 1) * sizeof(char));
 		glGetShaderInfoLog(shader, len, &len, message);
 		// std::cout << "Shader compilation failed for " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << std::endl;
-		std::cout << "Shader compilation failed" << std::endl;
+		print_error("Shader compilation failed"); // can I use %s here???????
 		std::cout << message << std::endl;
 		glDeleteShader(shader);
 		raise(SIGINT);
@@ -111,4 +111,54 @@ void APIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GLen
     }
     std::cout << std::endl;
     std::cout << "---------------------opengl-callback-end--------------" << std::endl;
+}
+
+// thse two are basically the same, will remake this
+void validateProgram(const GLuint program) {
+	GLCall(glValidateProgram(program));
+	GLint params = 0;
+	glGetProgramiv(program, GL_VALIDATE_STATUS, &params);
+	if (params == GL_FALSE) {
+		print_error("Program not valid");
+		GLint maxLength = 0;
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+		// The maxLength includes the NULL character
+		// GLchar infoLog[maxLength];
+		GLchar *infoLog = static_cast<GLchar *>(alloca(maxLength * sizeof(GLchar)));
+		infoLog[0] = '\0';
+		glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+
+		// The program is useless now. So delete it.
+		glDeleteProgram(program);
+
+		// got lazy
+		print_error(infoLog);
+
+		raise(SIGINT);
+	}
+}
+
+void checkProgramLinking(const GLuint program) {
+	GLCall(glValidateProgram(program));
+	GLint params = 0;
+	glGetProgramiv(program, GL_LINK_STATUS, &params);
+	if (params == GL_FALSE) {
+		print_error("Program linking failed");
+		GLint maxLength = 0;
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+		// The maxLength includes the NULL character
+		// GLchar infoLog[maxLength];
+		GLchar *infoLog = static_cast<GLchar *>(alloca(maxLength * sizeof(GLchar)));
+		glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+
+		// The program is useless now. So delete it.
+		glDeleteProgram(program);
+
+		// got lazy
+		print_error(infoLog);
+
+		raise(SIGINT);
+	}
 }

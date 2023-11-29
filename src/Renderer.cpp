@@ -1,5 +1,8 @@
 #include "Renderer.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 void Renderer::setupWindow() {
 	if (!glfwInit()) {
 		print_error("GLFW window failed to initiate");		
@@ -50,14 +53,14 @@ void Renderer::setupWindow() {
 
 	// // MSAA
 	// glEnable(GL_MULTISAMPLE);
-}
 
-void Renderer::setupBuffers() {
 	GLuint VAO;
 	GLCall(glGenVertexArrays(1, &VAO));
 	GLCall(glBindVertexArray(VAO));
 	this->VAO = VAO;
+}
 
+void Renderer::setupBuffers() {
 	// stream, dynamic or static??????????
 
 	/*
@@ -92,8 +95,8 @@ void Renderer::setupBuffers() {
 	// this is the 'model' basically, it defines the standard, already with the scaling applied
 	// particles going to a certain position is just applying some translation and scaling to this standard
 	GLuint VertexBuffer;
-	GLCall(glGenBuffers(1, &X_CoordBuffer));
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, X_CoordBuffer));
+	GLCall(glGenBuffers(1, &VertexBuffer));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer));
 	GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
 	this->VertexBuffer = VertexBuffer;
 		GLuint vertex_position_layout = 0;
@@ -144,6 +147,30 @@ void Renderer::setupBuffers() {
 		GLCall(glVertexAttribDivisor(color_layout, 1)); // values are per instance
 }
 
+// slot has been hardcoded to 0
+void makeTexture(GLuint *textureId, const std::string &path, const GLuint slot) {
+	stbi_set_flip_vertically_on_load(1);
+	int width, height, BPP;
+	unsigned char *image =	stbi_load(path.c_str(), &width, &height, &BPP, 4); // 4 -> RGBA
+	GLCall(glGenTextures(1, textureId));
+	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
+	GLCall(glBindTexture(GL_TEXTURE_2D, *textureId));
+
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image));
+
+	if (image) {
+		stbi_image_free(image);
+	}
+
+	// unbind
+	// GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+}
+
 void Renderer::setupShaders() {
 	GLCall(const GLuint program = glCreateProgram());
 
@@ -154,7 +181,7 @@ void Renderer::setupShaders() {
 		GLCall(VS = glCreateShader(GL_VERTEX_SHADER));
 		GLCall(glShaderSource(VS, 1, &vertex_shader, NULL));
 		GLCall(glCompileShader(VS));
-		GLCall(checkErrorInShader(VS));
+		checkErrorInShader(VS);
 		GLCall(glAttachShader(program, VS));
 		delete[] vertex_shader;
 	}
@@ -165,10 +192,29 @@ void Renderer::setupShaders() {
 		GLCall(FS = glCreateShader(GL_FRAGMENT_SHADER));
 		GLCall(glShaderSource(FS, 1, &fragment_shader, NULL));
 		GLCall(glCompileShader(FS));
-		GLCall(checkErrorInShader(FS));
+		checkErrorInShader(FS);
 		GLCall(glAttachShader(program, FS));
 		delete[] fragment_shader;
 	}
+
+	// shader cleanup
+	GLCall(glDeleteShader(VS));
+	GLCall(glDeleteShader(VS));
+
+	GLCall(glLinkProgram(program));
+		checkProgramLinking(program);
+		validateProgram(program);
+
+	GLCall(glUseProgram(program));
+
+	// hardcoded texture loading here, easy to change in the future
+	GLCall(GLint textureLoc = glGetUniformLocation(program, "u_Texture"));
+	// slot is allways 0
+	GLuint textureId;
+	makeTexture(&textureId, "res/circle.png", 0);
+	GLCall(glActiveTexture(GL_TEXTURE0 + 0));
+	GLCall(glBindTexture(GL_TEXTURE_2D, textureId));
+	GLCall(glUniform1i(textureLoc, 0));
 
 	this->program = program;
 }
