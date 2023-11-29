@@ -103,12 +103,12 @@ void Renderer::setupBuffers() {
 		GLuint vertex_position_layout = 0;
 		GLCall(glEnableVertexAttribArray(vertex_position_layout));
 		GLCall(glVertexAttribPointer(vertex_position_layout, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)0));
-		// GLCall(glVertexAttribDivisor(vertex_position_layout, 0)); // values are per vertex
+		GLCall(glVertexAttribDivisor(vertex_position_layout, 0)); // values are per vertex
 		GLuint vertex_texture_layout = 1;
 		GLCall(glEnableVertexAttribArray(vertex_texture_layout));
 		// 													// 2 floats, stride is 5, offset is 3 floats from the beggining
 		GLCall(glVertexAttribPointer(vertex_texture_layout, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (const void *)(3 * sizeof(GLfloat))));
-		// GLCall(glVertexAttribDivisor(vertex_texture_layout, 0)); // values are per vertex
+		GLCall(glVertexAttribDivisor(vertex_texture_layout, 0)); // values are per vertex
 
 	// specify vertex draw order
 	GLuint IBO;
@@ -117,35 +117,35 @@ void Renderer::setupBuffers() {
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
 	this->IBO = IBO;
 
-	// GLuint X_CoordBuffer;
-	// GLCall(glGenBuffers(1, &X_CoordBuffer));
-	// GLCall(glBindBuffer(GL_ARRAY_BUFFER, X_CoordBuffer));
-	// GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * max_particles, nullptr, GL_STREAM_DRAW));
-	// this->X_CoordBuffer = X_CoordBuffer;
-	// 	GLuint x_coord_layout = 2;
-	// 	GLCall(glEnableVertexAttribArray(x_coord_layout));
-	// 	GLCall(glVertexAttribPointer(x_coord_layout, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), 0));
-	// 	GLCall(glVertexAttribDivisor(x_coord_layout, 1)); // values are per instance
+	GLuint X_CoordBuffer;
+	GLCall(glGenBuffers(1, &X_CoordBuffer));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, X_CoordBuffer));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * max_particles, nullptr, GL_STREAM_DRAW));
+	this->X_CoordBuffer = X_CoordBuffer;
+		GLuint x_coord_layout = 2;
+		GLCall(glEnableVertexAttribArray(x_coord_layout));
+		GLCall(glVertexAttribPointer(x_coord_layout, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), 0));
+		GLCall(glVertexAttribDivisor(x_coord_layout, 1)); // values are per instance
 
-	// GLuint Y_CoordBuffer;
-	// GLCall(glGenBuffers(1, &Y_CoordBuffer));
-	// GLCall(glBindBuffer(GL_ARRAY_BUFFER, Y_CoordBuffer));
-	// GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * max_particles, nullptr, GL_STREAM_DRAW));
-	// this->Y_CoordBuffer = Y_CoordBuffer;
-	// 	GLuint y_coord_layout = 3;
-	// 	GLCall(glEnableVertexAttribArray(y_coord_layout));
-	// 	GLCall(glVertexAttribPointer(y_coord_layout, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), 0));
-	// 	GLCall(glVertexAttribDivisor(y_coord_layout, 1)); // values are per instance
+	GLuint Y_CoordBuffer;
+	GLCall(glGenBuffers(1, &Y_CoordBuffer));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, Y_CoordBuffer));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * max_particles, nullptr, GL_STREAM_DRAW));
+	this->Y_CoordBuffer = Y_CoordBuffer;
+		GLuint y_coord_layout = 3;
+		GLCall(glEnableVertexAttribArray(y_coord_layout));
+		GLCall(glVertexAttribPointer(y_coord_layout, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), 0));
+		GLCall(glVertexAttribDivisor(y_coord_layout, 1)); // values are per instance
 
-	// GLuint ColorBuffer;
-	// GLCall(glGenBuffers(1, &ColorBuffer));
-	// GLCall(glBindBuffer(GL_ARRAY_BUFFER, ColorBuffer));
-	// GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(GLfloat) * max_particles, nullptr, GL_STREAM_DRAW));
-	// this->ColorBuffer = ColorBuffer;
-	// 	GLuint color_layout = 4;
-	// 	GLCall(glEnableVertexAttribArray(color_layout));
-	// 	GLCall(glVertexAttribPointer(color_layout, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0));
-	// 	GLCall(glVertexAttribDivisor(color_layout, 1)); // values are per instance
+	GLuint ColorBuffer;
+	GLCall(glGenBuffers(1, &ColorBuffer));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, ColorBuffer));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(GLfloat) * max_particles, nullptr, GL_STREAM_DRAW));
+	this->ColorBuffer = ColorBuffer;
+		GLuint color_layout = 4;
+		GLCall(glEnableVertexAttribArray(color_layout));
+		GLCall(glVertexAttribPointer(color_layout, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0));
+		GLCall(glVertexAttribDivisor(color_layout, 1)); // values are per instance
 }
 
 // slot has been hardcoded to 0
@@ -177,7 +177,7 @@ void Renderer::setupShaders() {
 
 	GLuint VS, FS;
 	{
-		char filename[] = "res/basic_texture.vert";
+		char filename[] = "res/default.vert";
 		const GLchar *vertex_shader = readFromFile(filename);
 		GLCall(VS = glCreateShader(GL_VERTEX_SHADER));
 		GLCall(glShaderSource(VS, 1, &vertex_shader, NULL));
@@ -188,7 +188,7 @@ void Renderer::setupShaders() {
 	}
 
 	{
-		char filename[] = "res/basic_texture.frag";
+		char filename[] = "res/default.frag";
 		const GLchar *fragment_shader = readFromFile(filename);
 		GLCall(FS = glCreateShader(GL_FRAGMENT_SHADER));
 		GLCall(glShaderSource(FS, 1, &fragment_shader, NULL));
@@ -230,7 +230,7 @@ void Renderer::setBuffers(const ParticleArray &particles, GLuint len) {
 	GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * len, particles.current_y.get()));
 
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, ColorBuffer));
-	GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(GLfloat) * len, particles.current_x.get()));
+	GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(GLfloat) * len, particles.color.get()));
 }
 
 // not binding VAO, IBO and program for now
@@ -240,12 +240,12 @@ void Renderer::draw(const ParticleArray &particles, GLuint len) {
 
 	glUseProgram(program);
 	glBindVertexArray(VAO);
-	// setBuffers(particles, len);
+	setBuffers(particles, len);
 
 
 	// GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO));
-	// GLCall(glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr, len));
-	GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
+	GLCall(glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr, len));
+	// GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 	// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	glfwSwapBuffers(this->window);

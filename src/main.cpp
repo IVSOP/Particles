@@ -7,15 +7,15 @@ int main () {
 	renderer.setupShaders();
 	renderer.setupBuffers();
 	ParticleArray particles(2);
-	particles.current_x[0] = 500.0f;
-	particles.current_y[0] = 500.0f;
+	particles.current_x[0] = 0.25f;
+	particles.current_y[0] = 0.25f;
 	particles.color[0].R = 1.0f;
 	particles.color[0].G = 0.0f;
 	particles.color[0].B = 0.0f;
 	particles.color[0].A = 1.0f;
 
-	particles.current_x[1] = 250.0f;
-	particles.current_y[1] = 250.0f;
+	particles.current_x[1] = -0.25f;
+	particles.current_y[1] = -0.25f;
 	particles.color[1].R = 0.0f;
 	particles.color[1].G = 0.0f;
 	particles.color[1].B = 1.0f;

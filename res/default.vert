@@ -14,22 +14,22 @@ out vec4 v_Color;
 out vec2 v_TexCoord;
 
 void main() {
-	// all that needs to be done to calculate position is apply a translation to the base position
-	// however, coordinates are not normalized
+	// // all that needs to be done to calculate position is apply a translation to the base position
+	// // however, coordinates are not normalized
 	
-	// hardcoded for now, will change to uniform or something
-	const float width = 1000;
-	// make this into vec2 maybe?
-	// from pixel coordinates, calculate normalized coordinates
-	float offset_x = ((a_PositionX * 2) / width) - 1;
-	float offset_y = ((a_PositionY * 2) / width) - 1;
+	// // hardcoded for now, will change to uniform or something
+	// const float width = 1000;
+	// // make this into vec2 maybe?
+	// // from pixel coordinates, calculate normalized coordinates
+	// float offset_x = ((a_PositionX * 2) / width) - 1;
+	// float offset_y = ((a_PositionY * 2) / width) - 1;
+
+	// v_Color = a_Color;
+	// v_TexCoord = a_TexCoord;
+	// gl_Position = vec4(a_ModelPosition.x + offset_x, a_ModelPosition.y + offset_x, a_ModelPosition.z, 1.0f);
+
 
 	v_Color = a_Color;
 	v_TexCoord = a_TexCoord;
-	gl_Position = vec4(a_ModelPosition.x + offset_x, a_ModelPosition.y + offset_x, a_ModelPosition.z, 1.0f);
-
-
-	// v_Color = vec4(1.0, 0.0, 0.0, 1.0);
-	// v_TexCoord = a_TexCoord;
-	// gl_Position = vec4(a_ModelPosition.x, a_ModelPosition.y, a_ModelPosition.z, 1.0f);
+	gl_Position = vec4(a_ModelPosition.x + a_PositionX, a_ModelPosition.y + a_PositionY, a_ModelPosition.z, 1.0f);
 }
