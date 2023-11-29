@@ -104,10 +104,10 @@ void Renderer::setupBuffers() {
 		GLCall(glEnableVertexAttribArray(vertex_position_layout));
 		GLCall(glVertexAttribPointer(vertex_position_layout, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)0));
 		// GLCall(glVertexAttribDivisor(vertex_position_layout, 0)); // values are per vertex
-		// GLuint vertex_texture_layout = 1;
-		// GLCall(glEnableVertexAttribArray(vertex_texture_layout));
+		GLuint vertex_texture_layout = 1;
+		GLCall(glEnableVertexAttribArray(vertex_texture_layout));
 		// 													// 2 floats, stride is 5, offset is 3 floats from the beggining
-		// GLCall(glVertexAttribPointer(vertex_texture_layout, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (const void *)(3 * sizeof(GLfloat))));
+		GLCall(glVertexAttribPointer(vertex_texture_layout, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (const void *)(3 * sizeof(GLfloat))));
 		// GLCall(glVertexAttribDivisor(vertex_texture_layout, 0)); // values are per vertex
 
 	// specify vertex draw order
@@ -177,7 +177,7 @@ void Renderer::setupShaders() {
 
 	GLuint VS, FS;
 	{
-		char filename[] = "res/basic.vert";
+		char filename[] = "res/basic_texture.vert";
 		const GLchar *vertex_shader = readFromFile(filename);
 		GLCall(VS = glCreateShader(GL_VERTEX_SHADER));
 		GLCall(glShaderSource(VS, 1, &vertex_shader, NULL));
@@ -188,7 +188,7 @@ void Renderer::setupShaders() {
 	}
 
 	{
-		char filename[] = "res/basic.frag";
+		char filename[] = "res/basic_texture.frag";
 		const GLchar *fragment_shader = readFromFile(filename);
 		GLCall(FS = glCreateShader(GL_FRAGMENT_SHADER));
 		GLCall(glShaderSource(FS, 1, &fragment_shader, NULL));
@@ -209,8 +209,10 @@ void Renderer::setupShaders() {
 	GLCall(glUseProgram(program));
 
 	// hardcoded texture loading here, easy to change in the future
+	// no error checking
 	GLCall(GLint textureLoc = glGetUniformLocation(program, "u_Texture"));
-	// slot is allways 0
+
+	// texture slot is allways 0
 	GLuint textureId, slot = 0;
 	makeTexture(&textureId, "res/circle.png", slot);
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
