@@ -24,7 +24,7 @@ void Renderer::setupWindow() {
 	}
 	glfwMakeContextCurrent(window);
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if (glewInit() != GLEW_OK) {
 		print_error("GLEW failed\n");

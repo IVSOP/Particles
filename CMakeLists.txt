@@ -16,6 +16,7 @@ add_executable(${PROJECT_NAME}
 	src/Grid.cpp
 	src/Simulator.cpp
 	src/common.cpp
+	src/Spawner.cpp
 
 	external/imgui/src/imgui.cpp
 	external/imgui/src/imgui_draw.cpp
