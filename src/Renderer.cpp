@@ -72,21 +72,23 @@ void Renderer::setupBuffers() {
 
 	// for simplicity, scaling based on the radius is done here
 	GLfloat normalized_radius = this->particle_radius / this->pixel_width;
-	GLfloat vertices[] {
-		// x, y, z, texture_x, texture_y
-		-0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-		 0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
-		 0.5f,  0.5f, 1.0f, 1.0f, 1.0f,
-		-0.5f,  0.5f, 1.0f, 0.0f, 1.0f
-	};
 
+	// these are for testing, default values
 	// GLfloat vertices[] {
 	// 	// x, y, z, texture_x, texture_y
-	// 	-normalized_radius, -normalized_radius, 1.0f, 0.0f, 0.0f,
-	// 	 normalized_radius, -normalized_radius, 1.0f, 1.0f, 0.0f,
-	// 	 normalized_radius,  normalized_radius, 1.0f, 1.0f, 1.0f,
-	// 	-normalized_radius,  normalized_radius, 1.0f, 0.0f, 1.0f
+	// 	-0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+	// 	 0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
+	// 	 0.5f,  0.5f, 1.0f, 1.0f, 1.0f,
+	// 	-0.5f,  0.5f, 1.0f, 0.0f, 1.0f
 	// };
+
+	GLfloat vertices[] {
+		// x, y, z, texture_x, texture_y
+		-normalized_radius, -normalized_radius, 1.0f, 0.0f, 0.0f,
+		 normalized_radius, -normalized_radius, 1.0f, 1.0f, 0.0f,
+		 normalized_radius,  normalized_radius, 1.0f, 1.0f, 1.0f,
+		-normalized_radius,  normalized_radius, 1.0f, 0.0f, 1.0f
+	};
 
 	GLuint indices[] = {
 		0, 1, 2,
