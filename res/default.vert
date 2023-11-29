@@ -27,4 +27,9 @@ void main() {
 	v_Color = a_Color;
 	v_TexCoord = a_TexCoord;
 	gl_Position = vec4(a_ModelPosition.x + offset_x, a_ModelPosition.y + offset_x, a_ModelPosition.z, 1.0f);
+
+
+	// v_Color = vec4(1.0, 0.0, 0.0, 1.0);
+	// v_TexCoord = a_TexCoord;
+	// gl_Position = vec4(a_ModelPosition.x, a_ModelPosition.y, a_ModelPosition.z, 1.0f);
 }

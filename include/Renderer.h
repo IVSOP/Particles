@@ -37,7 +37,7 @@ public:
 
 	Renderer(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_height, GLfloat particle_radius)
 		: max_particles(max_particles), pixel_width(pixel_width), pixel_height(pixel_height), particle_radius(particle_radius),
-		  VAO(0), VertexBuffer(0), IBO(0), X_CoordBuffer(0), Y_CoordBuffer(0), ColorBuffer(0), program(0)
+		  window(nullptr), VAO(0), VertexBuffer(0), IBO(0), X_CoordBuffer(0), Y_CoordBuffer(0), ColorBuffer(0), program(0)
 		{ }
 	~Renderer() {
 
@@ -51,6 +51,9 @@ public:
 	void setParticleRadius(GLfloat radius);
 	void renderParticles(const ParticleArray &particles, uint32_t size); // renders <size> particles
 	void cleanup(); // destroy window, buffers etc
+
+	void setBuffers(const ParticleArray &particles, GLuint len); // called automatically by draw()
+	void draw(const ParticleArray &particles, GLuint len);
 };
 
 #endif

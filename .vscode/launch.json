@@ -2,11 +2,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "nodeDebug1",
+            "name": "debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/debug/Node",
-            "args": ["testeDir/", "0.0.0.0", "127.0.0.1"],
+            "program": "${workspaceFolder}/debug/GAME",
+            "args": [],
             "cwd": "${workspaceFolder}",
             "environment": [],
             "MIMode": "gdb", // com e sem isto funciona da mesma, idk
