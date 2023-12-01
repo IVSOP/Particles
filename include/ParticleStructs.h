@@ -21,7 +21,22 @@ struct ParticleArray {
 	ParticleArray(uint32_t size)
 		: current_x(std::make_unique<GLfloat[]>(size)), current_y(std::make_unique<GLfloat[]>(size)), old_x(std::make_unique<GLfloat[]>(size)),
 		  old_y(std::make_unique<GLfloat[]>(size)), accel_x(std::make_unique<GLfloat[]>(size)), accel_y(std::make_unique<GLfloat[]>(size)), color(std::make_unique<ParticleColor[]>(size)), size(size)
-		{}
+		{
+			// initialize everything to 0 for safety (except colors)
+			GLuint i;
+			for (i = 0; i < size; i++) {
+				current_x[i] = 0.0f;
+				current_y[i] = 0.0f;
+				old_x[i] = 0.0f;
+				old_y[i] = 0.0f;
+				accel_x[i] = 0.0f;
+				accel_y[i] = 0.0f;
+				color[i].R = 0.0f;
+				color[i].G = 1.0f;
+				color[i].B = 0.0f;
+				color[i].A = 1.0f;
+			}
+		}
 	~ParticleArray() = default;
 
 	// add restrict to all pointers?

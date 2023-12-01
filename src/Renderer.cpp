@@ -244,6 +244,11 @@ void Renderer::draw(const ParticleArray &particles, GLuint len) {
 	glBindVertexArray(VAO);
 	setBuffers(particles, len);
 
+	// printf("rendering particles:\n");
+	// GLuint i;
+	// for (i = 0; i < len; i++) {
+	// 	printf("[%d]: at (%f, %f) colors %f %f %f %f\n", i, particles.current_x[i], particles.current_y[i], particles.color[i].R, particles.color[i].G, particles.color[i].B, particles.color[i].A);
+	// }
 
 	// GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO));
 	GLCall(glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr, len));
