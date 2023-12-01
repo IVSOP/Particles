@@ -21,12 +21,24 @@ int main () {
 	simulator.setupRenderer();
 	simulator.createSpawner(2, 0, 500, 500, 325000.0, 0, directionalSpawner);
 
+	double lastFrameTime = glfwGetTime(), currentFrameTime, deltaTime;
+
 								// temporary
 	while (!glfwWindowShouldClose(simulator.renderer.window))
 	{
 		simulator.tick();
 		simulator.draw();
-		sleep(1);
+
+		currentFrameTime = glfwGetTime();
+        deltaTime = currentFrameTime - lastFrameTime;
+        lastFrameTime = currentFrameTime;
+
+        // Cap the frame rate to 60 fps
+        if (deltaTime < 1.0 / 60.0) {
+            double sleepTime = (1.0 / 60.0) - deltaTime;
+            usleep(sleepTime); // how do I know this uses the same units as glfw's sleep wtf?????
+			// is it better to just sleep or should I already start another tick here?
+        }		
 	}
 }
 
@@ -36,6 +48,7 @@ int main () {
 
 // sandbox needs to determine grid dimentions from the data provided
 // sandbox should also prob save the particle radius to be able to check for collisions
+// grid prob needs it too
 
 // make mipmaps????????????????
 
