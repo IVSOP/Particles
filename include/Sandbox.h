@@ -36,6 +36,10 @@ public:
 	void rebuildGrid();
 	void applyRectangleConstraint();
 	void applyCircleConstraint();
+	void solveCollisions();
+	void collideBetweenCells(GridCell *centerCell, GridCell *otherCell);
+	void collideSameCell(GridCell *cell);
+	void collideParticles(GLuint ID_A, GLuint ID_B);
 
 	std::vector<Spawner> spawners;
 };

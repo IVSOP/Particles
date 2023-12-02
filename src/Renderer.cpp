@@ -71,7 +71,7 @@ void Renderer::setupBuffers() {
 	*/
 
 	// for simplicity, scaling based on the radius is done here
-	GLfloat normalized_radius = this->particle_radius / this->pixel_width;
+	GLfloat normalized_radius = (this->particle_radius * 2) / this->pixel_width;
 
 	// these are for testing, default values
 	// GLfloat vertices[] {

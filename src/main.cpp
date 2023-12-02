@@ -1,8 +1,10 @@
 #include "Simulator.h"
 #include <stdio.h>
 
+#define PARTICLE_RADIUS 5.0f
+
 int main () {
-	Simulator simulator(10000, 1000, 1000, 10.0f);
+	Simulator simulator(10000, 1000, 1000, PARTICLE_RADIUS);
 	ParticleArray particles(1000);
 	particles.current_x[0] = 500.0f;
 	particles.current_y[0] = 500.0f;
@@ -19,7 +21,7 @@ int main () {
 	particles.color[1].A = 1.0f;
 
 	simulator.setupRenderer();
-	simulator.createSpawner(2, 0, 500, 500, 325000.0, 0, directionalSpawner);
+	simulator.createSpawner(2, 0, 0 + PARTICLE_RADIUS, 1000 - PARTICLE_RADIUS, 325000.0, 0, directionalSpawner);
 
 	double lastFrameTime = glfwGetTime(), currentFrameTime, deltaTime;
 

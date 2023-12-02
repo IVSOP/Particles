@@ -31,3 +31,10 @@ void Grid::insert(GLuint particle_id, GLfloat x, GLfloat y) {
 	cell.particles[cell.len] = particle_id;
 	cell.len ++;
 }
+
+GridCell *Grid::get(GLuint row, GLuint col) {
+	if (row >= rows || col >= cols) return nullptr;
+	// else if (row < 0 || col < 0) return nullptr; not needed, would overflow anyway and get a huge value
+
+	return &cells[(row * cols) + col];
+}

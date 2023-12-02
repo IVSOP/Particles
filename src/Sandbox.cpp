@@ -39,9 +39,10 @@ void Sandbox::tick() {
 	GLuint i;
 	for (i = 0; i < SUBSTEPS; i++) {
 		applyGravity();
+		solveCollisions();
 		updatePositions(PHYS_SUBSTEP);
-		rebuildGrid(); // clear it and add things to it
 		applyRectangleConstraint();
+		rebuildGrid(); // clear it and add things to it
 	}
 
 	this->current_tick++;
@@ -56,6 +57,7 @@ void Sandbox::applyGravity() {
 	}
 }
 
+// should I be passing in substep or just using the macro so the compiler can optimize this better?
 void Sandbox::updatePositions(GLfloat substep) {
 	GLfloat velocity_x, velocity_y;
 	const GLfloat substep_squared = substep * substep;
@@ -121,5 +123,100 @@ void Sandbox::applyCircleConstraint() {
 			particles.current_x[i] = center_x + (dist_to_center_x * (circle_radius - particle_radius));
 			particles.current_y[i] = center_y + (dist_to_center_y * (circle_radius - particle_radius));
 		}
+	}
+}
+
+void Sandbox::solveCollisions() {
+	GridCell *centerCell;
+	for (GLuint row = 0; row < grid.rows; row++) {
+		for (GLuint col = 0; col < grid.cols; col++) {
+			centerCell = grid.get(row, col);
+
+			/*
+			0 1 2
+			3 4 5
+			6 7 8
+
+			1 4 7 are central, remaining cells are determined from those very easily.
+			this means I could save som math here
+			maybe I can actually determine all of them from 4
+			for now, did not optimize
+			*/
+
+			collideBetweenCells(centerCell, grid.get(row + 1, col - 1));
+			collideBetweenCells(centerCell, grid.get(row + 1, col));
+			collideBetweenCells(centerCell, grid.get(row + 1, col + 1));
+
+#ifdef CHECK_ALL_CELL_COLLISIONS
+			collideBetweenCells(centerCell, grid.get(row, col - 1));
+#endif
+
+			collideSameCell(centerCell);
+			collideBetweenCells(centerCell, grid.get(row, col + 1));
+
+#ifdef CHECK_ALL_CELL_COLLISIONS
+			collideBetweenCells(centerCell, grid.get(row - 1, col - 1));
+			collideBetweenCells(centerCell, grid.get(row - 1, col));
+			collideBetweenCells(centerCell, grid.get(row - 1, col + 1));
+#endif
+		}
+	}
+}
+
+// checks if cells exist or not since get may return null
+void Sandbox::collideBetweenCells(GridCell *centerCell, GridCell *otherCell) {
+	if (otherCell == nullptr) return;
+
+	GLuint ID_A, ID_B;
+
+	for (GLuint i = 0; i < centerCell->len; i++) {
+		ID_A = centerCell->particles[i];
+
+		for (GLuint j = 0; j < otherCell->len; j++) {
+			ID_B = otherCell->particles[j];
+
+			collideParticles(ID_A, ID_B);
+		}
+	}
+}
+
+// wtf are these loops ok?????
+void Sandbox::collideSameCell(GridCell *cell) {
+	GLuint ID_A, ID_B;
+	for (GLuint i = 0; i < cell->len; i++) {
+		ID_A = cell->particles[i];
+		for (GLuint j = i + 1; j < cell->len; j++) {
+			ID_B = cell->particles[j];
+			collideParticles(ID_A, ID_B);
+		}
+	}
+}
+
+void Sandbox::collideParticles(GLuint ID_A, GLuint ID_B) {
+	GLfloat collisionAxis_x, collisionAxis_y;
+	GLfloat dist;
+	constexpr GLfloat response_coef = 0.75f;
+	GLfloat delta;
+	const GLfloat min_dist = particle_radius * 2; // minimum distance between each other for there to be a collision
+
+	collisionAxis_x = particles.current_x[ID_A] - particles.current_x[ID_B];
+	collisionAxis_y = particles.current_y[ID_A] - particles.current_y[ID_B];;
+
+	// avoid srqt as long as possible
+	dist = (collisionAxis_x * collisionAxis_x) + (collisionAxis_y * collisionAxis_y);
+	
+	if (dist < min_dist * min_dist) {
+
+		dist = sqrt(dist);
+		collisionAxis_x /= dist;
+		collisionAxis_y /= dist;
+
+		delta = 0.5f * response_coef * (dist - min_dist);
+
+		particles.current_x[ID_A] -= collisionAxis_x * (0.5 * delta);
+		particles.current_y[ID_A] -= collisionAxis_y * (0.5 * delta);
+
+		particles.current_x[ID_B] += collisionAxis_x * (0.5 * delta);
+		particles.current_y[ID_B] += collisionAxis_y * (0.5 * delta);
 	}
 }
