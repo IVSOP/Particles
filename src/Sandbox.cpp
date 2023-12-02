@@ -11,18 +11,17 @@ Sandbox::~Sandbox() {
 
 }
 
-void Sandbox::createSpawner(GLuint spawn_every_n, GLuint tick_offset, GLuint start_x, GLuint start_y, GLuint start_accel_x, GLuint start_accel_y, nextParticleFunction func) {
+void Sandbox::createSpawner(GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func) {
 	spawners.emplace_back(spawn_every_n, tick_offset, start_x, start_y, start_accel_x, start_accel_y, func);
 }
 
 void Sandbox::spawnAll() {
 	GLuint particles_added = 0;
-	for (Spawner &spawner : this->spawners) {
-		particles_added += spawner.createParticles(this->num_particles, this->current_tick, this->particles);
-		// add to grid
+	for (Spawner &spawner : this->spawners) {				// I had forgotten this and so all spawners started at base for this tick
+		particles_added += spawner.createParticles(this->num_particles + particles_added, this->current_tick, this->particles);
 	}
 
-	// add them to grid all at once
+	// add them to grid all at once, could be above but whatever
 
 	for (GLuint i = 0; i < particles_added; i++) {
 		const GLuint index = i + this->num_particles;
@@ -69,8 +68,8 @@ void Sandbox::updatePositions(GLfloat substep) {
 		particles.old_x[i] = particles.current_x[i];
 		particles.old_y[i] = particles.current_y[i];
 
-		particles.current_x[i] += velocity_x + (particles.accel_x[i]  * substep_squared);
-		particles.current_y[i] += velocity_y + (particles.accel_y[i]  * substep_squared);
+		particles.current_x[i] += velocity_x + (particles.accel_x[i] * substep_squared);
+		particles.current_y[i] += velocity_y + (particles.accel_y[i] * substep_squared);
 
 		particles.accel_x[i] = 0.0f;
 		particles.accel_y[i] = 0.0f;

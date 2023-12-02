@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #define PARTICLE_RADIUS 5.0f
+#define PARTICLE_DIAM PARTICLE_RADIUS * 2.0f
 
 int main () {
 	Simulator simulator(10000, 1000, 1000, PARTICLE_RADIUS);
@@ -21,7 +22,15 @@ int main () {
 	particles.color[1].A = 1.0f;
 
 	simulator.setupRenderer();
-	simulator.createSpawner(2, 0, 0 + PARTICLE_RADIUS, 1000 - PARTICLE_RADIUS, 325000.0, 0, directionalSpawner);
+	simulator.createSpawner(2, 0, 0 + PARTICLE_DIAM, 1000 - PARTICLE_DIAM, 325000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 3), 325000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 5), 315000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 7), 305000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 9), 295000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 11), 285000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 13), 275000.0f, 0.0f, directionalSpawner);
+
+	simulator.createSpawner(2, 0, 1000 - PARTICLE_DIAM, 1000 - PARTICLE_DIAM, - 325000.0f, 0.0f, directionalSpawner);
 
 	double lastFrameTime = glfwGetTime(), currentFrameTime, deltaTime;
 
