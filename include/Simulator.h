@@ -37,6 +37,15 @@ public:
 		sandbox.tick();
 	}
 
+	void loop_step();
+	void simulate(GLuint ticks); // no colors, only simulate. not meant to be used by other classes. does not calculate colors
+	void run(); // simulate but draws every frame
+	void calculate_colors(); // calculates colors and adds them to the sandbox
+	void soft_reset();
+	// run_editor
+	// void run_recording();
+	// void simulate_record();
+
 	Renderer renderer; // public for now for testing
 	Sandbox sandbox;
 private:

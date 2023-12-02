@@ -21,7 +21,6 @@ int main () {
 	particles.color[1].B = 1.0f;
 	particles.color[1].A = 1.0f;
 
-	simulator.setupRenderer();
 	simulator.createSpawner(2, 0, 0 + PARTICLE_DIAM, 1000 - PARTICLE_DIAM, 325000.0f, 0.0f, directionalSpawner);
 	simulator.createSpawner(2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 3), 325000.0f, 0.0f, directionalSpawner);
 	simulator.createSpawner(2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 5), 315000.0f, 0.0f, directionalSpawner);
@@ -32,34 +31,22 @@ int main () {
 
 	simulator.createSpawner(2, 0, 1000 - PARTICLE_DIAM, 1000 - PARTICLE_DIAM, - 325000.0f, 0.0f, directionalSpawner);
 
-	double lastFrameTime = glfwGetTime(), currentFrameTime, deltaTime;
-
-								// temporary
-	while (!glfwWindowShouldClose(simulator.renderer.window))
-	{
-		simulator.tick();
-		simulator.draw();
-
-		currentFrameTime = glfwGetTime();
-        deltaTime = currentFrameTime - lastFrameTime;
-        lastFrameTime = currentFrameTime;
-
-        // Cap the frame rate to 60 fps
-        if (deltaTime < 1.0 / 60.0) {
-            const double sleepTime = (1.0 / 60.0) - deltaTime;
-            usleep(sleepTime); // how do I know this uses the same units as glfw's sleep wtf?????
-			// is it better to just sleep or should I already start another tick here?
-        }		
-	}
+	simulator.simulate(512);
+	simulator.calculate_colors();
+	simulator.soft_reset();
+	simulator.run();
 }
 
 
 
 // todo:
 
-// sandbox needs to determine grid dimentions from the data provided
-// sandbox should also prob save the particle radius to be able to check for collisions
-// grid prob needs it too
+// function to get particle colors
+// do not remake image function for now
+// also, need to add start and end ticks to spawners, and sandbox should be the one that knows this information and must remove spawners
+// make some way to pass in the colors, maybe just memcpy them
+// only after that think about multithreading structure
+// cleanup after closing window, and prevent setting up the renderer multiple times
 
 // make mipmaps????????????????
 

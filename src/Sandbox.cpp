@@ -2,7 +2,7 @@
 
 Sandbox::Sandbox(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_height, uint32_t particle_radius)
 : particles(max_particles), num_particles(0), pixel_width(pixel_width), pixel_height(pixel_height),
-  particle_radius(particle_radius), grid(pixel_width, pixel_height, particle_radius), current_tick(0), index_tick(0), spawners()
+  particle_radius(particle_radius), grid(pixel_width, pixel_height, particle_radius), current_tick(0), spawners()
 {
 
 }

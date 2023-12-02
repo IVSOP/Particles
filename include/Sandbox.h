@@ -21,7 +21,7 @@ public:
 	GLfloat particle_radius;
 	Grid grid;
 	 // tick accumulator   resets to go through array of spawners
-	GLuint current_tick, index_tick;
+	GLuint current_tick;
 
 	// allocates each info array
 	Sandbox(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_height, uint32_t particle_radius);
