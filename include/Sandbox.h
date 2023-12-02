@@ -17,7 +17,8 @@ class Sandbox {
 public:
 	// particle information
 	ParticleArray particles;
-	GLuint num_particles;
+	GLuint num_particles, pixel_width, pixel_height;
+	GLfloat particle_radius;
 	Grid grid;
 	 // tick accumulator   resets to go through array of spawners
 	GLuint current_tick, index_tick;
@@ -32,9 +33,9 @@ public:
 
 	void applyGravity();
 	void updatePositions(GLfloat substep);
-	void rebuildGrid() {
-		
-	}
+	void rebuildGrid();
+	void applyRectangleConstraint();
+	void applyCircleConstraint();
 
 	std::vector<Spawner> spawners;
 };

@@ -1,7 +1,7 @@
 #include "Sandbox.h"
 
 Sandbox::Sandbox(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_height, uint32_t particle_radius)
-: particles(max_particles), num_particles(0), grid(0, 0), current_tick(0), index_tick(0), spawners()
+: particles(max_particles), num_particles(0), pixel_width(pixel_width), pixel_height(pixel_height), particle_radius(particle_radius), grid(0, 0), current_tick(0), index_tick(0), spawners()
 {
 
 }
@@ -30,6 +30,7 @@ void Sandbox::tick() {
 		applyGravity();
 		updatePositions(PHYS_SUBSTEP);
 		rebuildGrid(); // clear it and add things to it
+		applyCircleConstraint();
 	}
 
 	this->current_tick++;
@@ -60,5 +61,54 @@ void Sandbox::updatePositions(GLfloat substep) {
 
 		particles.accel_x[i] = 0.0f;
 		particles.accel_y[i] = 0.0f;
+	}
+}
+
+void Sandbox::rebuildGrid() {
+	// grid.clear();
+	// for (GLuint i = 0; i < num_particles; i++) {
+	// 	grid.insert(i, particles.current_x[i], particles.current_y[i]);
+	// }
+}
+
+// I stole this code from an older version, have no idea if it can be un-shitted
+void Sandbox::applyRectangleConstraint() {
+	for (GLuint i = 0; i < num_particles; i++) {
+		if (particles.current_x[i] + particle_radius > pixel_width) {
+			particles.current_x[i] = pixel_width - particle_radius;
+		} else if (particles.current_x[i] - particle_radius < 0) {
+			particles.current_x[i] = 0 + particle_radius;
+		}
+
+		if (particles.current_y[i] + particle_radius > pixel_height) {
+			particles.current_y[i] = pixel_height - particle_radius;
+		} else if (particles.current_y[i] - particle_radius < 0) {
+			particles.current_y[i] = 0 + particle_radius;
+		}
+	}
+}
+
+// VERY unoptimized, prob dont even need the vector's length, can bo by x and y components
+void Sandbox::applyCircleConstraint() {
+	constexpr GLfloat center_x = 500.0f;
+	constexpr GLfloat center_y = 500.0f;
+	constexpr GLfloat circle_radius = 500.0f;
+	GLfloat dist_to_center_x, dist_to_center_y, dist_to_center;
+
+	for (GLuint i = 0; i < num_particles; i++) {
+		dist_to_center_x = particles.current_x[i] - center_x;
+		dist_to_center_y = particles.current_y[i] - center_y;
+
+		dist_to_center = sqrt((dist_to_center_x * dist_to_center_x) + (dist_to_center_y * dist_to_center_y));
+
+		if (dist_to_center > circle_radius - particle_radius) {
+			// divide vector (dist_to_center_x, dist_to_center_y) by its length
+			// will reuse the values I already have, but it is normalized vector
+			dist_to_center_x /= dist_to_center;
+			dist_to_center_y /= dist_to_center;
+
+			particles.current_x[i] = center_x + (dist_to_center_x * (circle_radius - particle_radius));
+			particles.current_y[i] = center_y + (dist_to_center_y * (circle_radius - particle_radius));
+		}
 	}
 }

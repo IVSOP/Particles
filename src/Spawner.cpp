@@ -1,7 +1,5 @@
 #include "Spawner.h"
 
-#include <cmath>
-
 // maybe do this->tick_counter++; always and at the start, and remove the '-1' from the constructor?
 void Spawner::createParticles(GLuint *len, GLuint global_tick, ParticleArray &particles) {
 	if (this->tick_counter >= this->spawn_every_n) { // should be ==, >= for safety
