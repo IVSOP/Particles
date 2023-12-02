@@ -16,11 +16,18 @@ struct GridCell {
 // concept of row and collumn is abstracted on top of a 1D array
 class Grid {
 public:
-	const GLuint width, height, size;
+	const GLuint rows, cols, size;
+	const GLfloat particle_radius, inverse_square_size; // weird constant to speed up math
 	std::unique_ptr<GridCell[]> cells;
 
 	Grid() = delete;
-	Grid(GLuint width, GLuint height) : width(width), height(height), size(width * height), cells(std::make_unique<GridCell[]>(width * height)) { }
+	Grid(GLuint width, GLuint height, GLfloat particle_radius)
+	: rows(height / (2 * particle_radius)), cols(width / (2 * particle_radius)), size(rows * cols), particle_radius(particle_radius),
+	  inverse_square_size(1.0f / (2 * particle_radius)), cells(std::make_unique<GridCell[]>(width * height))
+	{
+		clear();
+	}
+
 	~Grid() = default;
 
 	void clear();

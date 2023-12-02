@@ -1,7 +1,8 @@
 #include "Sandbox.h"
 
 Sandbox::Sandbox(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_height, uint32_t particle_radius)
-: particles(max_particles), num_particles(0), pixel_width(pixel_width), pixel_height(pixel_height), particle_radius(particle_radius), grid(0, 0), current_tick(0), index_tick(0), spawners()
+: particles(max_particles), num_particles(0), pixel_width(pixel_width), pixel_height(pixel_height),
+  particle_radius(particle_radius), grid(pixel_width, pixel_height, particle_radius), current_tick(0), index_tick(0), spawners()
 {
 
 }
@@ -24,13 +25,15 @@ void Sandbox::tick() {
 	// spawn particles
 	spawnAll();
 
+	// need to add them to grid..................................
+
 	// run physics within substeps
 	GLuint i;
 	for (i = 0; i < SUBSTEPS; i++) {
 		applyGravity();
 		updatePositions(PHYS_SUBSTEP);
 		rebuildGrid(); // clear it and add things to it
-		applyCircleConstraint();
+		applyRectangleConstraint();
 	}
 
 	this->current_tick++;
@@ -65,10 +68,10 @@ void Sandbox::updatePositions(GLfloat substep) {
 }
 
 void Sandbox::rebuildGrid() {
-	// grid.clear();
-	// for (GLuint i = 0; i < num_particles; i++) {
-	// 	grid.insert(i, particles.current_x[i], particles.current_y[i]);
-	// }
+	grid.clear();
+	for (GLuint i = 0; i < num_particles; i++) {
+		grid.insert(i, particles.current_x[i], particles.current_y[i]);
+	}
 }
 
 // I stole this code from an older version, have no idea if it can be un-shitted

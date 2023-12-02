@@ -35,7 +35,7 @@ int main () {
 
         // Cap the frame rate to 60 fps
         if (deltaTime < 1.0 / 60.0) {
-            double sleepTime = (1.0 / 60.0) - deltaTime;
+            const double sleepTime = (1.0 / 60.0) - deltaTime;
             usleep(sleepTime); // how do I know this uses the same units as glfw's sleep wtf?????
 			// is it better to just sleep or should I already start another tick here?
         }		
