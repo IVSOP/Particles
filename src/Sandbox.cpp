@@ -16,16 +16,24 @@ void Sandbox::createSpawner(GLuint spawn_every_n, GLuint tick_offset, GLuint sta
 }
 
 void Sandbox::spawnAll() {
+	GLuint particles_added = 0;
 	for (Spawner &spawner : this->spawners) {
-		spawner.createParticles(&this->num_particles, this->current_tick, this->particles);
+		particles_added += spawner.createParticles(this->num_particles, this->current_tick, this->particles);
+		// add to grid
 	}
+
+	// add them to grid all at once
+
+	for (GLuint i = 0; i < particles_added; i++) {
+		const GLuint index = i + this->num_particles;
+		grid.insert(index, particles.current_x[index], particles.current_y[index]);
+	}
+	this->num_particles += particles_added;
 }
 
 void Sandbox::tick() {
 	// spawn particles
 	spawnAll();
-
-	// need to add them to grid..................................
 
 	// run physics within substeps
 	GLuint i;

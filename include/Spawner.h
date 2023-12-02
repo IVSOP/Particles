@@ -5,11 +5,11 @@
 
 // yes I know this is an absolute mess, but it was needed
 // cant I join this and the define together??????????????????????????????
-typedef void (*nextParticleFunction)(GLuint *len, GLuint global_tick, // current len, and will be modified // global tick
+typedef GLuint (*nextParticleFunction)(GLuint len, GLuint global_tick, // current len, and will be modified // global tick
 									 ParticleArray &particles, // data to be written
 									 GLuint tick_offset, GLuint start_x, GLuint start_y, GLuint start_accel_x, GLuint start_accel_y); // custom data passed in
 
-#define nextParticleFunction(f) void f (GLuint *len, GLuint global_tick, ParticleArray &particles, GLuint tick_offset, GLuint start_x, GLuint start_y, GLuint start_accel_x, GLuint start_accel_y)
+#define nextParticleFunction(f) GLuint f (GLuint len, GLuint global_tick, ParticleArray &particles, GLuint tick_offset, GLuint start_x, GLuint start_y, GLuint start_accel_x, GLuint start_accel_y)
 
 // for now does not have a tick limit, did not really think this through
 class Spawner {
@@ -28,9 +28,9 @@ public:
 	~Spawner() = default;
 
 	// can spawn multiple particles if it wants to!!!!
-	// it receives the arrays themselves, and the len
-	// len contains current len, and should be modified to reflect the number of particles added
-	void createParticles(GLuint *len, GLuint tick, ParticleArray &particles);
+	// it receives the arrays themselves, and the len to know where to add the particles
+	// returns number of particles added
+	GLuint createParticles(GLuint len, GLuint global_tick, ParticleArray &particles);
 };
 
 nextParticleFunction(directionalSpawner);
