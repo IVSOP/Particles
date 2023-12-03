@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME}
 	src/Simulator.cpp
 	src/common.cpp
 	src/Spawner.cpp
+	src/Recorder.cpp
 
 	external/imgui/src/imgui.cpp
 	external/imgui/src/imgui_draw.cpp

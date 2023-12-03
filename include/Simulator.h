@@ -4,17 +4,21 @@
 #include "common.h"
 #include "Sandbox.h"
 #include "Renderer.h"
+#include "Recorder.h"
 
 // this is the main class
 // does nearly nothing except store and call the other ones
 // mainly exists due to sandbox and renderer needing the same information
 
+// renderer and sandbox are store in pointers to be easier to replace with new ones, or to have nothing at all
+
 class Simulator {
 public:
-	Simulator() = delete;
+	Simulator() : renderer(nullptr), sandbox(nullptr) { }
+
 									  // in pixels --------------------------------------------
-	Simulator(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_height, GLfloat particle_radius)
-	: renderer(max_particles, pixel_width, pixel_height, particle_radius), sandbox(max_particles, pixel_width, pixel_height, particle_radius)
+	Simulator(GLuint max_particles, GLuint pixel_width, GLuint pixel_height, GLfloat particle_radius)
+	: renderer(std::make_unique<Renderer>(max_particles, pixel_width, pixel_height, particle_radius)), sandbox(std::make_unique<Sandbox>(max_particles, pixel_width, pixel_height, particle_radius))
 	{ }
 
 	~Simulator() = default;
@@ -24,17 +28,17 @@ public:
 
 	///////////////////////////////////////// renderer
 	void setupRenderer() {
-		renderer.setupWindow();
-		renderer.setupShaders();
-		renderer.setupBuffers();
+		renderer->setupWindow();
+		renderer->setupShaders();
+		renderer->setupBuffers();
 	}
 
 	void draw() {
-		renderer.draw(sandbox.particles, sandbox.num_particles);
+		renderer->draw(sandbox->particles, sandbox->num_particles);
 	}
 
 	void tick() {
-		sandbox.tick();
+		sandbox->tick();
 	}
 
 	void loop_step();
@@ -43,11 +47,12 @@ public:
 	void calculate_colors(); // calculates colors and adds them to the sandbox
 	void soft_reset();
 	// run_editor
-	// void run_recording();
-	// void simulate_record();
+	// dimensions of new sandbox
+	void run_recording(GLuint pixel_width, GLuint pixel_height, GLfloat particle_radius); // runs from recording
+	void simulate_record(GLuint ticks); // simulates into recording. WARNING for now completely replaces existing sandbox with a new one. spawners are gone
 
-	Renderer renderer; // public for now for testing
-	Sandbox sandbox;
+	std::unique_ptr<Renderer> renderer; // public for now for testing
+	std::unique_ptr<Sandbox> sandbox;
 private:
 };
 

@@ -4,7 +4,7 @@
 #include "stb_image.h"
 
 void Simulator::createSpawner(GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func) {
-	sandbox.createSpawner(spawn_every_n, tick_offset, start_x, start_y, start_accel_x, start_accel_y, func);
+	sandbox->createSpawner(spawn_every_n, tick_offset, start_x, start_y, start_accel_x, start_accel_y, func);
 }
 
 void Simulator::loop_step() {
@@ -30,16 +30,17 @@ void Simulator::loop_step() {
 void Simulator::run() {
 	setupRenderer();
 
-	while (!glfwWindowShouldClose(renderer.window)) {
+	while (!glfwWindowShouldClose(renderer->window)) {
 		loop_step();
 	}
 }
 
 // maintains colors. particles are maintained but not important, will not be used
 void Simulator::soft_reset() {
-	sandbox.grid.clear();
-	sandbox.current_tick = 0;
-	sandbox.num_particles = 0;
+	sandbox->grid.clear();
+	sandbox->current_tick = 0;
+	sandbox->num_particles = 0;
+	sandbox->resetSpawners();
 }
 
 void Simulator::simulate(GLuint ticks) {
@@ -48,6 +49,74 @@ void Simulator::simulate(GLuint ticks) {
 			printf("tick #%u\n", i);
 		}
 		tick();
+	}
+}
+
+void Simulator::simulate_record(GLuint ticks) {
+	RecorderOutput recorder("res/recording.rec");
+
+	GLuint i;
+	for (i = 0; i < ticks; i++) {
+		if (i % 128 == 0) {
+			printf("tick #%u\n", i);
+		}
+		tick();
+		recorder.saveFrame(sandbox->num_particles, sandbox->particles.current_x.get(), sandbox->particles.current_y.get());
+	}
+
+	calculate_colors();
+	recorder.setColorsAndMetadata(sandbox->particles.color.get(), i, sandbox->num_particles);
+
+	puts("Finished recording");
+}
+
+void Simulator::run_recording(GLuint pixel_width, GLuint pixel_height, GLfloat particle_radius) {
+	RecorderInput recorder("res/recording.rec");
+	MetaData data = recorder.readMetadata();
+
+	Sandbox *new_sandbox = new Sandbox(data.total_particles, pixel_width, pixel_height, particle_radius);
+	Renderer *new_renderer = new Renderer(data.total_particles, pixel_width, pixel_height, particle_radius);
+	this->sandbox.reset(std::move(new_sandbox));
+	this->renderer.reset(std::move(new_renderer));
+
+	recorder.readColors(data, this->sandbox->particles.color.get());
+	recorder.seekToFrames();
+
+	setupRenderer();
+
+	for (GLuint i = 0; i < data.total_ticks && !glfwWindowShouldClose(renderer->window); i++) {
+		double lastFrameTime = glfwGetTime(), currentFrameTime, deltaTime;
+
+		// instead of tick, read from file
+		sandbox->num_particles = recorder.readFrame(new_sandbox->particles.current_x.get(), new_sandbox->particles.current_y.get());
+		// printf("frame %u read %u\n", i, sandbox->num_particles);
+
+		draw();
+
+		currentFrameTime = glfwGetTime();
+		deltaTime = currentFrameTime - lastFrameTime;
+		lastFrameTime = currentFrameTime;
+
+		// Cap the frame rate to 60 fps
+		if (deltaTime < 1.0 / 60.0) {
+			const double sleepTime = (1.0 / 60.0) - deltaTime;
+			usleep(sleepTime); // how do I know this uses the same units as glfw's sleep wtf?????
+			// is it better to just sleep or should I already start another tick here?
+		}
+
+		printf("FPS: %u\n", static_cast<unsigned int>(1.0f / deltaTime));
+	}
+
+	// loop to make old_pos equal to new_pos, otherwise goes to shit
+	for (GLuint i = 0; i < sandbox->num_particles; i++) {
+		sandbox->particles.old_x[i] = sandbox->particles.current_x[i];
+		sandbox->particles.old_y[i] = sandbox->particles.current_y[i];
+	}
+
+	puts("Finished getting from recording");
+	// this does not make a smooth transition at all
+	while (!glfwWindowShouldClose(renderer->window)) {
+		loop_step();
 	}
 }
 
@@ -64,11 +133,11 @@ void Simulator::calculate_colors() {
 		exit(EXIT_FAILURE);
 	}
 
-	if (static_cast<GLuint>(width) != sandbox.pixel_width) {
+	if (static_cast<GLuint>(width) != sandbox->pixel_width) {
 		fprintf(stderr, "Images must match sandbox dimensions for now\n");
 		exit(EXIT_FAILURE);
 	}
-	if (static_cast<GLuint>(height) != sandbox.pixel_height) {
+	if (static_cast<GLuint>(height) != sandbox->pixel_height) {
 		fprintf(stderr, "Images must match sandbox dimensions for now\n");
 		exit(EXIT_FAILURE);
 	}
@@ -78,11 +147,11 @@ void Simulator::calculate_colors() {
 		exit(EXIT_FAILURE);
 	}
 
-	for (GLuint particleID = 0; particleID < sandbox.num_particles; particleID++) {
-		const GLfloat center_x = sandbox.particles.current_x[particleID];
-		const GLfloat center_y = sandbox.particles.current_y[particleID];
+	for (GLuint particleID = 0; particleID < sandbox->num_particles; particleID++) {
+		const GLfloat center_x = sandbox->particles.current_x[particleID];
+		const GLfloat center_y = sandbox->particles.current_y[particleID];
 
-		const int radius = static_cast<int>(sandbox.particle_radius),
+		const int radius = static_cast<int>(sandbox->particle_radius),
 		diameter = 2 * radius;
 
 		// for loops start at 0, need to apply this offset to be in the bottom left corner of square
@@ -137,9 +206,9 @@ void Simulator::calculate_colors() {
 		B /= static_cast<GLfloat>(count);
 		A = 1.0f;
 
-		sandbox.particles.color[particleID].R = R;
-		sandbox.particles.color[particleID].G = G;
-		sandbox.particles.color[particleID].B = B;
-		sandbox.particles.color[particleID].A = A;
+		sandbox->particles.color[particleID].R = R;
+		sandbox->particles.color[particleID].G = G;
+		sandbox->particles.color[particleID].B = B;
+		sandbox->particles.color[particleID].A = A;
 	}
 }

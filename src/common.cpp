@@ -8,6 +8,7 @@ const GLchar *readFromFile(char *filepath) {
 		perror("Invalid file path");
 		exit(1);
 	}
+	// ?????
 	fseek(fp, 0L, SEEK_END);
 	unsigned long size = ftell(fp);
 	fseek(fp, 0L, SEEK_SET);

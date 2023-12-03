@@ -30,6 +30,7 @@ public:
 	void createSpawner(GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func);
 	void spawnAll();
 	void tick(); // uses times inside of it, doesnt receive them at least for now
+	void resetSpawners();
 
 	void applyGravity();
 	void updatePositions(GLfloat substep);

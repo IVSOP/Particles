@@ -30,6 +30,12 @@ void Sandbox::spawnAll() {
 	this->num_particles += particles_added;
 }
 
+void Sandbox::resetSpawners() {
+	for (Spawner &spawner : spawners) {
+		spawner.tick_counter = 0;
+	}
+}
+
 void Sandbox::tick() {
 	// spawn particles
 	spawnAll();
