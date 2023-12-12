@@ -11,11 +11,12 @@ void Grid::clear() {
 
 // given x and y, inserts particle in the respective position
 // however, this position is in a 1D array
-// also, position is truncated to an int
 void Grid::insert(GLuint particle_id, GLfloat x, GLfloat y) {
 	// equal to <coord> / size_of_square
 	const GLuint row = static_cast<GLuint>(y * inverse_square_size);
 	const GLuint col = static_cast<GLuint>(x * inverse_square_size);
+
+	// printf("asked to insert %f %f, converted to row %u col %u\n", x, y, row, col);
 	
 	const GLuint index = (row * cols) + col;
 

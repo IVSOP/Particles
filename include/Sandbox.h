@@ -7,8 +7,8 @@
 
 #include <vector>
 
-#define FPS 60.0f
-#define PHYS_STEP 1.0f / FPS
+#define PHYS_FPS 60.0f
+#define PHYS_STEP 1.0f / PHYS_FPS
 #define SUBSTEPS 8
 #define PHYS_SUBSTEP PHYS_STEP / SUBSTEPS
 

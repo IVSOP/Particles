@@ -17,14 +17,18 @@ void Simulator::loop_step() {
 	deltaTime = currentFrameTime - lastFrameTime;
 	lastFrameTime = currentFrameTime;
 
-	// Cap the frame rate to 60 fps
-	if (deltaTime < 1.0 / 60.0) {
-		const double sleepTime = (1.0 / 60.0) - deltaTime;
+	// NOTE: this is, for now, not the actual FPS tbut the fps of running every single frame
+	// should be correct when things start lagging, will fix in the future
+	printf("FPS: %u\n", static_cast<unsigned int>(1.0f / deltaTime));
+
+
+	// Cap the frame rate
+	if (deltaTime < TARGET_PHYS_STEP) {
+		const double sleepTime = (TARGET_PHYS_STEP - deltaTime) * 10E5; // multiply to get from seconds to microseconds, this is prob platform dependent and very bad
+		printf("smaller!!! sleep for %f\n", sleepTime);
 		usleep(sleepTime); // how do I know this uses the same units as glfw's sleep wtf?????
 		// is it better to just sleep or should I already start another tick here?
 	}
-
-	printf("FPS: %u\n", static_cast<unsigned int>(1.0f / deltaTime));
 }
 
 void Simulator::run() {
