@@ -19,13 +19,12 @@ void Simulator::loop_step() {
 
 	// NOTE: this is, for now, not the actual FPS tbut the fps of running every single frame
 	// should be correct when things start lagging, will fix in the future
-	printf("FPS: %u\n", static_cast<unsigned int>(1.0f / deltaTime));
+	printf("Best possible FPS: %u\n", static_cast<unsigned int>(1.0f / deltaTime));
 
 
 	// Cap the frame rate
 	if (deltaTime < TARGET_PHYS_STEP) {
 		const double sleepTime = (TARGET_PHYS_STEP - deltaTime) * 10E5; // multiply to get from seconds to microseconds, this is prob platform dependent and very bad
-		printf("smaller!!! sleep for %f\n", sleepTime);
 		usleep(sleepTime); // how do I know this uses the same units as glfw's sleep wtf?????
 		// is it better to just sleep or should I already start another tick here?
 	}

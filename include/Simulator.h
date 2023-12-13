@@ -6,7 +6,7 @@
 #include "Renderer.h"
 #include "Recorder.h"
 
-#define TARGET_FPS 1.0f
+#define TARGET_FPS 60.0f
 #define TARGET_PHYS_STEP 1.0f / TARGET_FPS
 
 // this is the main class

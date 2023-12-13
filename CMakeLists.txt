@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22.1) # 3.13.4
 
 project(GAME)
 
-SET(GCC_COVERAGE_COMPILE_FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -mavx2") # -O2??? -ftree-vectorize -fopt-info-vec-missed or all or optimized
+SET(GCC_COVERAGE_COMPILE_FLAGS "-O2 -Wall -Wextra -pedantic -Wno-unused-parameter -mavx2") # -ftree-vectorize -fopt-info-vec-missed or all or optimized
 # SET(GCC_COVERAGE_LINK_FLAGS    "-lgcov")
 
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
