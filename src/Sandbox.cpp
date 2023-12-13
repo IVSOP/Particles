@@ -63,8 +63,10 @@ void Sandbox::spawnAll() {
 void Sandbox::resetSpawners() {
 	active_spawners.clear();
 	sched_spawners.clear();
-	for (SpawnerInfo &spawnerInfo : spawners) {
-		spawnerInfo.spawner.tick_counter = 0;
+	const GLuint size = spawners.size();
+	for (GLuint i = 0; i < size; i++) {
+		sched_spawners.push_back(i);
+		spawners[i].spawner.tick_counter = 0;
 	}
 }
 

@@ -5,21 +5,21 @@
 #define PARTICLE_DIAM PARTICLE_RADIUS * 2.0f
 
 int main () {
-	Simulator simulator(10000, 1000, 1000, PARTICLE_RADIUS);
+	Simulator simulator(15000, 1000, 1000, PARTICLE_RADIUS);
 
-	simulator.createSpawner(0, 1000, 2, 0, 0 + PARTICLE_DIAM, 1000 - PARTICLE_DIAM, 325000.0f, 0.0f, directionalSpawner);
-	simulator.createSpawner(0, 1000, 2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 3), 325000.0f, 0.0f, directionalSpawner);
-	simulator.createSpawner(0, 1000, 2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 5), 315000.0f, 0.0f, directionalSpawner);
-	simulator.createSpawner(0, 1000, 2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 7), 305000.0f, 0.0f, directionalSpawner);
-	simulator.createSpawner(0, 1000, 2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 9), 295000.0f, 0.0f, directionalSpawner);
-	simulator.createSpawner(0, 1000, 2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 11), 285000.0f, 0.0f, directionalSpawner);
-	simulator.createSpawner(0, 1000, 2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 13), 275000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(0, 2700, 2, 0, 0 + PARTICLE_DIAM, 1000 - PARTICLE_DIAM, 325000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(20, 2700, 2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 3), 325000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(40, 2350, 2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 5), 315000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(60, 2300, 2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 7), 305000.0f, 0.0f, directionalSpawner);
 
-	simulator.createSpawner(0, 1000, 2, 0, 1000 - PARTICLE_DIAM, 1000 - PARTICLE_DIAM, - 325000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(0, 2700, 2, 0, 1000 - PARTICLE_DIAM, 1000 - PARTICLE_DIAM, - 325000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(20, 2700, 2, 0, 1000 - PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 3), - 325000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(40, 2350, 2, 0, 1000 - PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 5), - 315000.0f, 0.0f, directionalSpawner);
+	simulator.createSpawner(60, 2300, 2, 0, 1000 - PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 7), - 305000.0f, 0.0f, directionalSpawner);
 
-	// simulator.simulate(512);
-	// simulator.calculate_colors();
-	// simulator.soft_reset();
+	simulator.simulate(3000);
+	simulator.calculate_colors();
+	simulator.soft_reset();
 	simulator.run();
 
 	// simulator.simulate_record(2400);
@@ -31,6 +31,8 @@ int main () {
 
 
 // todo:
+
+// add a system where error in adding to grid draws the current simulation with the grid on top of it, making offender particles red. also draw the one particle that will not be in the grid
 
 // think about multithreading structure. pool or locks?
 // cleanup after closing window, and prevent setting up the renderer multiple times

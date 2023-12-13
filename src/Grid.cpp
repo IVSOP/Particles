@@ -24,7 +24,21 @@ void Grid::insert(GLuint particle_id, GLfloat x, GLfloat y) {
 
 #ifdef GRID_DEBUG
 	if (cell.len == GRID_CELL_CAPACITY) {
-		fprintf(stderr, "Too many particles in (%f, %f) -> %u\n", x, y, index);
+		float avg_len = 0;
+		fprintf(stderr, "Too many particles in (%f, %f) -> %u. Printing grid\n", x, y, index);
+		for (GLuint row2 = 0; row2 < rows; row2 ++) {
+			fprintf(stderr, "\nrow %u----------------------------------\n", row2);
+			const GLuint index2 = (row * cols) + col;
+			for (GLuint col2 = 0; col2 < cols; col2++) {
+				if (col2 == col && row2 == row) {
+					fprintf(stderr, KRED "[%u]:%u|" KNRM, col2, cells[index2].len);
+				} else {
+					fprintf(stderr, "[%u]:%u|", col2, cells[index2].len);
+				}
+				avg_len += cells[index2].len;
+			}	
+		}
+		fprintf(stderr, "\nAvg len is %f\nTotal len is %d\n", avg_len / size, static_cast<int>(avg_len));
 		exit(5);
 	}
 #endif
