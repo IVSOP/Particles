@@ -3,8 +3,8 @@
 // #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-void Simulator::createSpawner(GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func) {
-	sandbox->createSpawner(spawn_every_n, tick_offset, start_x, start_y, start_accel_x, start_accel_y, func);
+void Simulator::createSpawner(GLuint start_tick, GLuint total_ticks, GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func) {
+	sandbox->createSpawner(start_tick, total_ticks, spawn_every_n, tick_offset, start_x, start_y, start_accel_x, start_accel_y, func);
 }
 
 void Simulator::loop_step() {

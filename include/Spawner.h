@@ -10,7 +10,7 @@ typedef nextParticleFunction( (*nextParticleFunctionType) );
 // for now does not have a tick limit, did not really think this through
 class Spawner {
 public:
-	GLuint spawn_every_n, tick_counter;
+	GLuint spawn_every_n, tick_counter; // counter resets!!!!!!!
 	GLuint tick_offset; // to reuse cyclical functions in different starting points
 	GLfloat start_x, start_y, start_accel_x, start_accel_y; // parameters useful for functions
 	nextParticleFunctionType func;

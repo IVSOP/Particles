@@ -27,7 +27,7 @@ public:
 	~Simulator() = default;
 
 	///////////////////////////////////////// sandbox
-	void createSpawner(GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func);
+	void createSpawner(GLuint start_tick, GLuint total_ticks, GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func);
 
 	///////////////////////////////////////// renderer
 	void setupRenderer() {

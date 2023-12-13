@@ -12,6 +12,16 @@
 #define SUBSTEPS 8
 #define PHYS_SUBSTEP PHYS_STEP / SUBSTEPS
 
+// wrapper for spawners, so they know when to start and end
+struct SpawnerInfo {
+	const GLuint start_tick;
+	const GLuint total_ticks;
+	Spawner spawner;
+
+	SpawnerInfo(GLuint start_tick, GLuint total_ticks, GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func)
+	: start_tick(start_tick), total_ticks(total_ticks), spawner(spawn_every_n, tick_offset, start_x, start_y, start_accel_x, start_accel_y, func) { }
+};
+
 // contains all information about particles
 class Sandbox {
 public:
@@ -27,7 +37,7 @@ public:
 	Sandbox(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_height, uint32_t particle_radius);
 	~Sandbox();
 
-	void createSpawner(GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func);
+	void createSpawner(GLuint start_tick, GLuint total_ticks, GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func);
 	void spawnAll();
 	void tick(); // uses times inside of it, doesnt receive them at least for now
 	void resetSpawners();
@@ -42,7 +52,12 @@ public:
 	void collideSameCell(GridCell *cell);
 	void collideParticles(GLuint ID_A, GLuint ID_B);
 
-	std::vector<Spawner> spawners;
+	std::vector<SpawnerInfo> spawners;
+	// IDs to spawners above
+	// THIS NEEDS TO BE IMPROVED, very slow!!! but works
+	// prob better to have a static array or something
+	std::vector<GLuint> active_spawners;
+	std::vector<GLuint> sched_spawners;
 };
 
 #endif

@@ -2,7 +2,8 @@
 
 Sandbox::Sandbox(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_height, uint32_t particle_radius)
 : particles(max_particles), num_particles(0), pixel_width(pixel_width), pixel_height(pixel_height),
-  particle_radius(particle_radius), grid(pixel_width, pixel_height, particle_radius), current_tick(0), spawners()
+  particle_radius(particle_radius), grid(pixel_width, pixel_height, particle_radius), current_tick(0),
+  spawners(), active_spawners(), sched_spawners()
 {
 
 }
@@ -11,14 +12,43 @@ Sandbox::~Sandbox() {
 
 }
 
-void Sandbox::createSpawner(GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func) {
-	spawners.emplace_back(spawn_every_n, tick_offset, start_x, start_y, start_accel_x, start_accel_y, func);
+void Sandbox::createSpawner(GLuint start_tick, GLuint total_ticks, GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func) {
+	const GLuint ID = spawners.size();
+	spawners.emplace_back(start_tick, total_ticks, spawn_every_n, tick_offset, start_x, start_y, start_accel_x, start_accel_y, func);
+	sched_spawners.push_back(ID);
 }
 
 void Sandbox::spawnAll() {
 	GLuint particles_added = 0;
-	for (Spawner &spawner : this->spawners) {				// I had forgotten this and so all spawners started at base for this tick
-		particles_added += spawner.createParticles(this->num_particles + particles_added, this->current_tick, this->particles);
+
+	std::vector<GLuint>::iterator iter = sched_spawners.begin();
+
+	while(iter != sched_spawners.end()) {
+		const GLuint spawnerInfoID = *iter;
+		SpawnerInfo &info = spawners[spawnerInfoID];
+
+		if (info.start_tick >= current_tick) {
+			// add to actve and remove from here
+			active_spawners.push_back(spawnerInfoID);
+			iter = sched_spawners.erase(iter);
+		} else {
+			++iter;
+		}
+	}
+
+	iter = active_spawners.begin();
+
+	while(iter != active_spawners.end()) {
+		const GLuint spawnerInfoID = *iter;
+		SpawnerInfo &info = spawners[spawnerInfoID];
+
+		if (current_tick >= info.start_tick + info.total_ticks) { // change to have end tick instead to avoid this mess?
+			// kill spawner
+			iter = active_spawners.erase(iter);
+		} else {
+			particles_added += info.spawner.createParticles(this->num_particles + particles_added, this->current_tick, this->particles);
+			++iter;
+		}
 	}
 
 	// add them to grid all at once, could be above but whatever
@@ -31,8 +61,10 @@ void Sandbox::spawnAll() {
 }
 
 void Sandbox::resetSpawners() {
-	for (Spawner &spawner : spawners) {
-		spawner.tick_counter = 0;
+	active_spawners.clear();
+	sched_spawners.clear();
+	for (SpawnerInfo &spawnerInfo : spawners) {
+		spawnerInfo.spawner.tick_counter = 0;
 	}
 }
 
