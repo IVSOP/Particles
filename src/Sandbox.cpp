@@ -19,15 +19,13 @@ void Sandbox::createSpawner(GLuint start_tick, GLuint total_ticks, GLuint spawn_
 }
 
 void Sandbox::spawnAll() {
-	GLuint particles_added = 0;
-
 	std::vector<GLuint>::iterator iter = sched_spawners.begin();
 
 	while(iter != sched_spawners.end()) {
 		const GLuint spawnerInfoID = *iter;
 		SpawnerInfo &info = spawners[spawnerInfoID];
 
-		if (info.start_tick >= current_tick) {
+		if (current_tick >= info.start_tick) {
 			// add to actve and remove from here
 			active_spawners.push_back(spawnerInfoID);
 			iter = sched_spawners.erase(iter);
@@ -36,6 +34,7 @@ void Sandbox::spawnAll() {
 		}
 	}
 
+	GLuint particles_added = 0;
 	iter = active_spawners.begin();
 
 	while(iter != active_spawners.end()) {

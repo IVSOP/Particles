@@ -35,7 +35,7 @@ nextParticleFunction(directionalSpawner) {
 // make a function that goes the reverse direction??
 nextParticleFunction(centerSpawner) {
 	// counter will act as degrees
-	GLfloat rad = (static_cast<GLfloat>(global_tick) / 180) * M_PI;
+	GLfloat rad = (static_cast<GLfloat>(global_tick + tick_offset) / 180) * M_PI;
 	// needs to be offset for center to match and then resized
 	particles.accel_x[len] = cos(rad) * 1000000.0;
 	particles.accel_y[len] = sin(rad) * 1000000.0;
@@ -55,7 +55,7 @@ nextParticleFunction(circumferenceSpawner) {
 	constexpr GLfloat radius = 500.0f;
 
 	// counter will act as degrees in radians
-	GLfloat rad = (static_cast<GLfloat>(global_tick) / 180) * M_PI;
+	GLfloat rad = (static_cast<GLfloat>(global_tick + tick_offset) / 180) * M_PI;
 	// needs to be offset for center to match and then resized
 	GLfloat pos_x = cos(rad);
 	GLfloat pos_y = sin(rad);
@@ -71,11 +71,11 @@ nextParticleFunction(circumferenceSpawner) {
 	GLfloat offset_y = start_y - pos_y;
 
 	// since this is already calculated might as well do some acceleration in the direction of the center
-	particles.accel_x[len] = offset_x * 3500.0;
-	particles.accel_y[len] = offset_y * 3500.0;
+	particles.accel_x[len] = offset_x * 1500.0;
+	particles.accel_y[len] = offset_y * 1500.0;
 
-	offset_x /= 20; // 20 = radius
-	offset_y /= 20;
+	offset_x /= 5.0f; // particle radius??
+	offset_y /= 5.0f;
 
 	pos_x += offset_x;
 	pos_y += offset_y;
