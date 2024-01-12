@@ -30,7 +30,7 @@ int main () {
 	simulator.createSpawner(300, 2800, 2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 11), 285000.0f, 0.0f, directionalSpawner);
 	simulator.createSpawner(350, 2650, 2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 13), 275000.0f, 0.0f, directionalSpawner);
 
-	simulator.simulate(3800);
+	simulator.simulate(3800); // 3800
 	simulator.calculate_colors();
 	simulator.soft_reset();
 	simulator.run();

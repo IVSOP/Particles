@@ -3,6 +3,9 @@
 // #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
+#include "stb_image_resize2.h"
+
 void Simulator::createSpawner(GLuint start_tick, GLuint total_ticks, GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func) {
 	sandbox->createSpawner(start_tick, total_ticks, spawn_every_n, tick_offset, start_x, start_y, start_accel_x, start_accel_y, func);
 }
@@ -124,6 +127,9 @@ void Simulator::run_recording(GLuint pixel_width, GLuint pixel_height, GLfloat p
 	}
 }
 
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 // absolutely completely unoptimized, copied from previous version
 void Simulator::calculate_colors() {
 	constexpr char image_path[] = "res/radiation_symbol.png";
@@ -151,68 +157,110 @@ void Simulator::calculate_colors() {
 		exit(EXIT_FAILURE);
 	}
 
+	const int new_width = renderer->pixel_width / (sandbox->particle_radius * 2);
+	const int new_height = renderer->pixel_height / (sandbox->particle_radius * 2);
+
+	// this is prob wrong, but idk
+	const int ratio_x = sandbox->pixel_width / new_width;
+	const int ratio_y = sandbox->pixel_height / new_height;
+
+	unsigned char * resized_image = (unsigned char*) malloc(new_width * new_height * STBIR_RGBA);
+	stbir_resize_uint8_linear(image, width, height, 0, resized_image, new_width, new_height, 0, STBIR_RGBA);
+
 	for (GLuint particleID = 0; particleID < sandbox->num_particles; particleID++) {
-		const GLfloat center_x = sandbox->particles.current_x[particleID];
-		const GLfloat center_y = sandbox->particles.current_y[particleID];
+		// get the particle position
+		const GLfloat x = sandbox->particles.current_x[particleID];
+		const GLfloat y = sandbox->particles.current_y[particleID];
+		// cast it to the row and col equivalents in the resized image
+		// this works but I am not confident about it
+		const GLuint new_x = ratio_x * static_cast<GLuint>(x) / new_width;
+		const GLuint new_y = ratio_y * static_cast<GLuint>(y) / new_height;
 
-		const int radius = static_cast<int>(sandbox->particle_radius),
-		diameter = 2 * radius;
+		const GLuint pixel = STBIR_RGBA * ((new_y * new_width) + new_x); // get pixel position in 1D offset, assumes it starts in bottom left as (0,0)
 
-		// for loops start at 0, need to apply this offset to be in the bottom left corner of square
-		// each X value is worth 1 pixel
-		// each Y value is worth <width> pixels
-		// is in pixels
-		const int centerX = static_cast<int>(center_x) - radius;
-		const int centerY = static_cast<int>(center_y) - radius;
-		
-		int offsetx;
-		int offsety;
+		const GLfloat R = static_cast<GLfloat>(resized_image[pixel + 0]) / 255.0f;
+		const GLfloat G = static_cast<GLfloat>(resized_image[pixel + 1]) / 255.0f;
+		const GLfloat B = static_cast<GLfloat>(resized_image[pixel + 2]) / 255.0f;
+		const GLfloat A = 1.0f;
 
-		if (centerX < 0) {
-			offsetx = 0;
-		} else if (centerX > width - radius) {
-			offsetx = width - radius;
-		} else {
-			offsetx = centerX;
-		}
-
-		if (centerY < 0) {
-			offsety = 0;
-		} else if (centerY > height - radius) {
-			offsety = height - radius;
-		} else {
-			offsety = centerY;
-		}
-
-		const int offset = offsetx + offsety * width;
-
-		GLfloat R = 0.0f, G = 0.0f, B = 0.0f, A = 0.0f;
-		int count = 0;
-		int final_offset;
-
-		int pixel_row, pixel_col;
-		for (pixel_row = 0; pixel_row < diameter; pixel_row ++) {
-			for (pixel_col = 0; pixel_col < diameter; pixel_col ++) {
-				final_offset = (offset + pixel_col + (pixel_row * width)) * 4;
-				// printf("final offset is %d\n", final_offset);
-
-				R += static_cast<GLfloat>(image[final_offset + 0]) / 255.0f;
-				G += static_cast<GLfloat>(image[final_offset + 1]) / 255.0f;
-				B += static_cast<GLfloat>(image[final_offset + 2]) / 255.0f;
-				// A...
-
-				count ++; // needed??????
-			}
-		}
-
-		R /= static_cast<GLfloat>(count);
-		G /= static_cast<GLfloat>(count);
-		B /= static_cast<GLfloat>(count);
-		A = 1.0f;
+		// printf("in particle %u\nPositions: %f %f\nnew_x: %u new_y: %u\npixel: %u", particleID, x, y, new_x, new_y, pixel);
+		// printf("%u RBGA: %f %f %f %f\n", pixel, R, G, B, A);
 
 		sandbox->particles.color[particleID].R = R;
 		sandbox->particles.color[particleID].G = G;
 		sandbox->particles.color[particleID].B = B;
 		sandbox->particles.color[particleID].A = A;
 	}
+
+	free(resized_image);
+
+	// for (GLuint particleID = 0; particleID < sandbox->num_particles; particleID++) {
+	// 	const GLfloat center_x = sandbox->particles.current_x[particleID];
+	// 	const GLfloat center_y = sandbox->particles.current_y[particleID];
+
+	// 	printf("particle in %f, %f\n", center_x, center_y);
+
+	// 	const int radius = static_cast<int>(sandbox->particle_radius),
+	// 	diameter = 2 * radius;
+
+	// 	// for loops start at 0, need to apply this offset to be in the bottom left corner of square
+	// 	// each X value is worth 1 pixel
+	// 	// each Y value is worth <width> pixels
+	// 	// is in pixels
+	// 	const int centerX = static_cast<int>(center_x) - radius;
+	// 	const int centerY = static_cast<int>(center_y) - radius;
+		
+	// 	int offsetx;
+	// 	int offsety;
+
+	// 	if (centerX < 0) {
+	// 		offsetx = 0;
+	// 	} else if (centerX > width - radius) {
+	// 		offsetx = width - radius;
+	// 	} else {
+	// 		offsetx = centerX;
+	// 	}
+
+	// 	if (centerY < 0) {
+	// 		offsety = 0;
+	// 	} else if (centerY > height - radius) {
+	// 		offsety = height - radius;
+	// 	} else {
+	// 		offsety = centerY;
+	// 	}
+
+	// 	const int offset = offsetx + offsety * width;
+
+	// 	GLfloat R = 0.0f, G = 0.0f, B = 0.0f, A = 0.0f;
+	// 	int count = 0;
+	// 	int final_offset;
+
+	// 	int pixel_row, pixel_col;
+	// 	for (pixel_row = 0; pixel_row < diameter; pixel_row ++) {
+	// 		for (pixel_col = 0; pixel_col < diameter; pixel_col ++) {
+	// 			final_offset = (offset + pixel_col + (pixel_row * width)) * 4;
+	// 			printf("offset: %d, row: %d col: %d\n", offset, pixel_row, pixel_col);
+	// 			// printf("final offset is %d\n", final_offset);
+
+	// 			R += static_cast<GLfloat>(image[final_offset + 0]) / 255.0f;
+	// 			G += static_cast<GLfloat>(image[final_offset + 1]) / 255.0f;
+	// 			B += static_cast<GLfloat>(image[final_offset + 2]) / 255.0f;
+	// 			// A...
+
+	// 			count ++; // needed??????
+	// 		}
+	// 	}
+
+	// 	R /= static_cast<GLfloat>(count);
+	// 	G /= static_cast<GLfloat>(count);
+	// 	B /= static_cast<GLfloat>(count);
+	// 	A = 1.0f;
+
+	// 	sandbox->particles.color[particleID].R = R;
+	// 	sandbox->particles.color[particleID].G = G;
+	// 	sandbox->particles.color[particleID].B = B;
+	// 	sandbox->particles.color[particleID].A = A;
+	// }
+
+	// free image??????
 }
