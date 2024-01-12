@@ -11,7 +11,7 @@ void Simulator::loop_step() {
 	double lastFrameTime = glfwGetTime(), currentFrameTime, deltaTime;
 
 	tick();
-	draw();
+	// should draw() be here?????????
 
 	currentFrameTime = glfwGetTime();
 	deltaTime = currentFrameTime - lastFrameTime;
@@ -28,6 +28,7 @@ void Simulator::loop_step() {
 		usleep(sleepTime); // how do I know this uses the same units as glfw's sleep wtf?????
 		// is it better to just sleep or should I already start another tick here?
 	}
+	draw();
 }
 
 void Simulator::run() {

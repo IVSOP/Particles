@@ -51,6 +51,9 @@ nextParticleFunction(centerSpawner) {
 // spawner itself goes around a circle
 // make a function that goes the reverse direction??
 // decided to hardcode the circle radius, improve this in the future
+
+// why tf is this crooked??????
+
 nextParticleFunction(circumferenceSpawner) {
 	constexpr GLfloat radius = 500.0f;
 
