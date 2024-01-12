@@ -127,12 +127,8 @@ void Simulator::run_recording(GLuint pixel_width, GLuint pixel_height, GLfloat p
 	}
 }
 
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-// absolutely completely unoptimized, copied from previous version
 void Simulator::calculate_colors() {
-	constexpr char image_path[] = "res/radiation_symbol.png";
+	constexpr char image_path[] = "/home/ivsopi3/Downloads/belo.png";
 	stbi_set_flip_vertically_on_load(1);
 	int width, height, BPP;
 	// load png
@@ -140,15 +136,6 @@ void Simulator::calculate_colors() {
 
 	if (!image) {
 		fprintf(stderr, "Error loading image\n");
-		exit(EXIT_FAILURE);
-	}
-
-	if (static_cast<GLuint>(width) != sandbox->pixel_width) {
-		fprintf(stderr, "Images must match sandbox dimensions for now\n");
-		exit(EXIT_FAILURE);
-	}
-	if (static_cast<GLuint>(height) != sandbox->pixel_height) {
-		fprintf(stderr, "Images must match sandbox dimensions for now\n");
 		exit(EXIT_FAILURE);
 	}
 
