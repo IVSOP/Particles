@@ -128,7 +128,7 @@ void Simulator::run_recording(GLuint pixel_width, GLuint pixel_height, GLfloat p
 }
 
 void Simulator::calculate_colors() {
-	constexpr char image_path[] = "/home/ivsopi3/Downloads/belo.png";
+	constexpr char image_path[] = "res/radiation_symbol.png";
 	stbi_set_flip_vertically_on_load(1);
 	int width, height, BPP;
 	// load png

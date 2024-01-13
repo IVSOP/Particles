@@ -82,6 +82,7 @@ public:
 	void applyRectangleConstraint();
 	void applyCircleConstraint();
 	void solveCollisions();
+	void solveCollisionsFromTo(GLuint start_row, GLuint end_row);
 	void collideBetweenCells(GridCell *centerCell, GridCell *otherCell);
 	void collideSameCell(GridCell *cell);
 	void collideParticles(GLuint ID_A, GLuint ID_B);

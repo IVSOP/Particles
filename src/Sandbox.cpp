@@ -15,7 +15,6 @@ Sandbox::Sandbox(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_he
 
 	const GLuint slice_size = grid.rows / threads;
 	const GLuint half = slice_size / 2;
-	printf("%u %u\n", slice_size, half);
 
 	for (GLuint i = 0; i < threads; i++) {
 		threadSliceInfo[i] = ThreadSliceInfo(i * slice_size, (i * slice_size) + half, (i+1) * slice_size);
@@ -180,12 +179,30 @@ void Sandbox::applyCircleConstraint() {
 }
 
 void Sandbox::solveCollisions() {
-	// for (GLuint i = 0; i < this->threads; i++) {
-		
-	// }
+	for (GLuint i = 0; i < this->threads; i++) {
+		(void) thread_pool.submit_task(
+			[this, i] {
+				solveCollisionsFromTo(threadSliceInfo[i].start_row, threadSliceInfo[i].mid_row);
+			}
+		);
+	}
 
+	thread_pool.wait();
+
+		for (GLuint i = 0; i < this->threads; i++) {
+		(void) thread_pool.submit_task(
+			[this, i] {
+				solveCollisionsFromTo(threadSliceInfo[i].mid_row, threadSliceInfo[i].end_row);
+			}
+		);
+	}
+
+	thread_pool.wait();
+}
+
+void Sandbox::solveCollisionsFromTo(GLuint start_row, GLuint end_row) {
 	GridCell *centerCell;
-	for (GLuint row = 0; row < grid.rows; row++) {
+	for (GLuint row = start_row; row < end_row; row++) {
 		for (GLuint col = 0; col < grid.cols; col++) {
 			centerCell = grid.get(row, col);
 
