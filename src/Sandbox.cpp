@@ -139,14 +139,14 @@ void Sandbox::rebuildGrid() {
 // I stole this code from an older version, have no idea if it can be un-shitted
 void Sandbox::applyRectangleConstraint() {
 	for (GLuint i = 0; i < num_particles; i++) {
-		if (particles.current_x[i] + particle_radius > pixel_width) {
-			particles.current_x[i] = pixel_width - particle_radius;
+		if (particles.current_x[i] + particle_radius > static_cast<GLfloat>(pixel_width)) {
+			particles.current_x[i] = static_cast<GLfloat>(pixel_width) - particle_radius;
 		} else if (particles.current_x[i] - particle_radius < 0) {
 			particles.current_x[i] = 0 + particle_radius;
 		}
 
-		if (particles.current_y[i] + particle_radius > pixel_height) {
-			particles.current_y[i] = pixel_height - particle_radius;
+		if (particles.current_y[i] + particle_radius > static_cast<GLfloat>(pixel_height)) {
+			particles.current_y[i] = static_cast<GLfloat>(pixel_height) - particle_radius;
 		} else if (particles.current_y[i] - particle_radius < 0) {
 			particles.current_y[i] = 0 + particle_radius;
 		}

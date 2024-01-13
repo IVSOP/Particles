@@ -1,7 +1,14 @@
+## Bugfix
+- [x] Particles going out of bounds when window size is not 1000x1000. lost like 2h in this, it was the shader, the last place I expected to see this
+- [ ] Particles are all white when usingthe current settings in main
+
 ## Recorder
 - [ ] Put new sandbox dimensions etc into recorder
 - [ ] Need to cache things in memory and not keep getting from file somehow. fix
 - [ ] Recorder is forgetting either accel or old_pos in the transition. fix
+
+## Rendering
+- [ ] Change shader to support height != width
 
 ## Simulation
 - [ ] Finish multithreading

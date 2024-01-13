@@ -19,12 +19,13 @@ public:
 
 	/*
 		Particle information for the gpu:
-			passed in once, using a single static buffer:
+			passed in once, using a single static buffer: (wait what? why not use a uniform?)
 				particle radius -> 1 GLfloat
 				texture coordinates -> 2 GLfloats
 
 			passed in once, using uniform:
 				texture
+				sandbox width (float)
 		
 			passed every frame, through buffers:
 				buffer for X coordinates -> 1 GLfloat

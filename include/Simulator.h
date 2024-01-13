@@ -21,7 +21,8 @@ public:
 
 									  // in pixels --------------------------------------------
 	Simulator(GLuint max_particles, GLuint pixel_width, GLuint pixel_height, GLfloat particle_radius, GLuint threads)
-	: renderer(std::make_unique<Renderer>(max_particles, pixel_width, pixel_height, particle_radius)), sandbox(std::make_unique<Sandbox>(max_particles, pixel_width, pixel_height, particle_radius, threads))
+	: renderer(std::make_unique<Renderer>(max_particles, pixel_width, pixel_height, particle_radius)),
+	  sandbox(std::make_unique<Sandbox>(max_particles, pixel_width, pixel_height, particle_radius, threads))
 	{ }
 
 	~Simulator() = default;

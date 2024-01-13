@@ -1,11 +1,11 @@
 #include "Simulator.h"
 #include <stdio.h>
 
-#define PARTICLE_RADIUS 5.0f
+#define PARTICLE_RADIUS 2.0f
 #define PARTICLE_DIAM PARTICLE_RADIUS * 2.0f
 
 int main () {
-	Simulator simulator(15000, 1000, 1000, PARTICLE_RADIUS, 4);
+	Simulator simulator(15000, 1024, 1024, PARTICLE_RADIUS, 8);
 
 	// simulator.createSpawner(600, 2400, 2, 0, 0 + PARTICLE_DIAM, 1000 - PARTICLE_DIAM, 325000.0f, 0.0f, directionalSpawner);
 	// simulator.createSpawner(500, 2500, 2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 3), 325000.0f, 0.0f, directionalSpawner);
@@ -33,6 +33,7 @@ int main () {
 	simulator.simulate(3800); // 3800
 	simulator.calculate_colors();
 	simulator.soft_reset();
+
 	simulator.run();
 
 	// simulator.simulate_record(2400);

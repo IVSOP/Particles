@@ -213,6 +213,7 @@ void Renderer::setupShaders() {
 	// hardcoded texture loading here, easy to change in the future
 	// no error checking
 	GLCall(GLint textureLoc = glGetUniformLocation(program, "u_Texture"));
+	GLCall(GLint widthLoc = glGetUniformLocation(program, "u_Width"));
 
 	// texture slot is allways 0
 	GLuint textureId, slot = 0;
@@ -220,6 +221,8 @@ void Renderer::setupShaders() {
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, textureId)); // bind to the slot
 	GLCall(glUniform1i(textureLoc, slot));
+
+	GLCall(glUniform1f(widthLoc, static_cast<GLfloat>(this->pixel_width)));
 
 	this->program = program;
 }
