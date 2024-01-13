@@ -1,6 +1,6 @@
 ## Bugfix
 - [x] Particles going out of bounds when window size is not 1000x1000. lost like 2h in this, it was the shader, the last place I expected to see this
-- [ ] Particles are all white when usingthe current settings in main
+- [x] Particles are all white when using the current settings in main
 
 ## Recorder
 - [ ] Put new sandbox dimensions etc into recorder

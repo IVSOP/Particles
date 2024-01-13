@@ -1,7 +1,7 @@
 #include "Simulator.h"
 #include <stdio.h>
 
-#define PARTICLE_RADIUS 2.0f
+#define PARTICLE_RADIUS 4.0f
 #define PARTICLE_DIAM PARTICLE_RADIUS * 2.0f
 
 int main () {
