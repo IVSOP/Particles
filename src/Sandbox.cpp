@@ -1,11 +1,26 @@
 #include "Sandbox.h"
 
-Sandbox::Sandbox(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_height, uint32_t particle_radius)
+Sandbox::Sandbox(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_height, uint32_t particle_radius, GLuint threads)
 : particles(max_particles), num_particles(0), pixel_width(pixel_width), pixel_height(pixel_height),
   particle_radius(particle_radius), grid(pixel_width, pixel_height, particle_radius), current_tick(0),
+  thread_pool(threads), threads(threads), threadSliceInfo(std::make_unique<ThreadSliceInfo []>(threads)),
   spawners(), active_spawners(), sched_spawners()
 {
+	// all distribute to each thread is rows of the grid
+	// the calculations are already done there, so just use them
+	if (grid.rows % threads != 0) {
+		fprintf(stderr, "ERROR: cannot divide grid rows (%u) by number of threads (%u)\n", grid.rows, threads);
+		exit(1);
+	}
 
+	const GLuint slice_size = grid.rows / threads;
+	const GLuint half = slice_size / 2;
+	printf("%u %u\n", slice_size, half);
+
+	for (GLuint i = 0; i < threads; i++) {
+		threadSliceInfo[i] = ThreadSliceInfo(i * slice_size, (i * slice_size) + half, (i+1) * slice_size);
+		// printf("thread %u will work from %u to %u and %u to %u\n", i, threadSliceInfo[i].start_row, threadSliceInfo[i].mid_row, threadSliceInfo[i].mid_row, threadSliceInfo[i].end_row);
+	}
 }
 
 Sandbox::~Sandbox() {
@@ -76,11 +91,11 @@ void Sandbox::tick() {
 	// run physics within substeps
 	GLuint i;
 	for (i = 0; i < SUBSTEPS; i++) {
-		applyGravity();
+		applyGravity(); // not multithreaded
 		solveCollisions();
-		updatePositions(PHYS_SUBSTEP);
-		applyRectangleConstraint();
-		rebuildGrid(); // clear it and add things to it
+		updatePositions(PHYS_SUBSTEP); // not multithreaded
+		applyRectangleConstraint(); // not multithreaded
+		rebuildGrid(); // not multithreaded // clear it and add things to it
 	}
 
 	this->current_tick++;
@@ -165,6 +180,10 @@ void Sandbox::applyCircleConstraint() {
 }
 
 void Sandbox::solveCollisions() {
+	// for (GLuint i = 0; i < this->threads; i++) {
+		
+	// }
+
 	GridCell *centerCell;
 	for (GLuint row = 0; row < grid.rows; row++) {
 		for (GLuint col = 0; col < grid.cols; col++) {

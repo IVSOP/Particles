@@ -5,7 +5,7 @@
 #define PARTICLE_DIAM PARTICLE_RADIUS * 2.0f
 
 int main () {
-	Simulator simulator(15000, 1000, 1000, PARTICLE_RADIUS);
+	Simulator simulator(15000, 1000, 1000, PARTICLE_RADIUS, 4);
 
 	// simulator.createSpawner(600, 2400, 2, 0, 0 + PARTICLE_DIAM, 1000 - PARTICLE_DIAM, 325000.0f, 0.0f, directionalSpawner);
 	// simulator.createSpawner(500, 2500, 2, 0, 0 + PARTICLE_DIAM, 1000 - (PARTICLE_DIAM * 3), 325000.0f, 0.0f, directionalSpawner);

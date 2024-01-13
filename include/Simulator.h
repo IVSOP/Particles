@@ -20,8 +20,8 @@ public:
 	Simulator() : renderer(nullptr), sandbox(nullptr) { }
 
 									  // in pixels --------------------------------------------
-	Simulator(GLuint max_particles, GLuint pixel_width, GLuint pixel_height, GLfloat particle_radius)
-	: renderer(std::make_unique<Renderer>(max_particles, pixel_width, pixel_height, particle_radius)), sandbox(std::make_unique<Sandbox>(max_particles, pixel_width, pixel_height, particle_radius))
+	Simulator(GLuint max_particles, GLuint pixel_width, GLuint pixel_height, GLfloat particle_radius, GLuint threads)
+	: renderer(std::make_unique<Renderer>(max_particles, pixel_width, pixel_height, particle_radius)), sandbox(std::make_unique<Sandbox>(max_particles, pixel_width, pixel_height, particle_radius, threads))
 	{ }
 
 	~Simulator() = default;
@@ -51,7 +51,7 @@ public:
 	void soft_reset();
 	// run_editor
 	// dimensions of new sandbox
-	void run_recording(GLuint pixel_width, GLuint pixel_height, GLfloat particle_radius); // runs from recording
+	void run_recording(GLuint pixel_width, GLuint pixel_height, GLfloat particle_radius, GLuint threads); // runs from recording. number of threads here does not matter, they are only used when the recording finishes and calculations are performed again
 	void simulate_record(GLuint ticks); // simulates into recording. WARNING for now completely replaces existing sandbox with a new one. spawners are gone
 
 	std::unique_ptr<Renderer> renderer; // public for now for testing

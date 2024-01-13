@@ -7,6 +7,8 @@
 
 #include <vector>
 
+#include "BS_thread_pool.hpp"
+
 #define PHYS_FPS 60.0f
 #define PHYS_STEP 1.0f / PHYS_FPS
 #define SUBSTEPS 8
@@ -22,6 +24,34 @@ struct SpawnerInfo {
 	: start_tick(start_tick), total_ticks(total_ticks), spawner(spawn_every_n, tick_offset, start_x, start_y, start_accel_x, start_accel_y, func) { }
 };
 
+
+/*
+IMPORTANT!!!
+
+threads will work like this:
+first pass
+	[start, mid[
+second pass
+	[mid, end[
+
+is this good?????????? idk but it will work
+*/
+struct ThreadSliceInfo {
+	GLuint
+		start_row, // 1
+		mid_row,   // 1, 2
+		end_row;   // 2
+	ThreadSliceInfo() = default;
+	ThreadSliceInfo(GLuint start_row, GLuint mid_row, GLuint end_row) : start_row(start_row), mid_row(mid_row), end_row(end_row) { }
+
+	ThreadSliceInfo& operator=(const ThreadSliceInfo& info) {
+		start_row = info.start_row;
+		mid_row = info.mid_row;
+		end_row = info.end_row;
+		return *this;
+	}
+};
+
 // contains all information about particles
 class Sandbox {
 public:
@@ -33,8 +63,12 @@ public:
 	 // tick accumulator   resets to go through array of spawners
 	GLuint current_tick;
 
+	BS::thread_pool thread_pool;
+	GLuint threads;
+	std::unique_ptr<ThreadSliceInfo []> threadSliceInfo;
+
 	// allocates each info array
-	Sandbox(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_height, uint32_t particle_radius);
+	Sandbox(uint32_t max_particles, uint32_t pixel_width, uint32_t pixel_height, uint32_t particle_radius, GLuint threads);
 	~Sandbox();
 
 	void createSpawner(GLuint start_tick, GLuint total_ticks, GLuint spawn_every_n, GLuint tick_offset, GLfloat start_x, GLfloat start_y, GLfloat start_accel_x, GLfloat start_accel_y, nextParticleFunctionType func);

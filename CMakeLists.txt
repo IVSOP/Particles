@@ -35,6 +35,7 @@ include_directories(
 	include
 	external/imgui/include
 	external/stb
+	external/thread-pool/include
 )
 
 # wtf??

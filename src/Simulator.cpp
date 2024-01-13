@@ -77,11 +77,11 @@ void Simulator::simulate_record(GLuint ticks) {
 	puts("Finished recording");
 }
 
-void Simulator::run_recording(GLuint pixel_width, GLuint pixel_height, GLfloat particle_radius) {
+void Simulator::run_recording(GLuint pixel_width, GLuint pixel_height, GLfloat particle_radius, GLuint threads) {
 	RecorderInput recorder("res/recording.rec");
 	MetaData data = recorder.readMetadata();
 
-	Sandbox *new_sandbox = new Sandbox(data.total_particles, pixel_width, pixel_height, particle_radius);
+	Sandbox *new_sandbox = new Sandbox(data.total_particles, pixel_width, pixel_height, particle_radius, threads);
 	Renderer *new_renderer = new Renderer(data.total_particles, pixel_width, pixel_height, particle_radius);
 	this->sandbox.reset(std::move(new_sandbox));
 	this->renderer.reset(std::move(new_renderer));
