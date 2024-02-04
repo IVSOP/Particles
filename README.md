@@ -1,4 +1,4 @@
-# VerletParticles
+# Particles
 
 ## Very simple particle physics simulation, with image rendering
 
